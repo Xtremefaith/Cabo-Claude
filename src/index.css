@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: theme('colors.night.900');
+    color: #f5f3ff;
+    font-family: theme('fontFamily.body');
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  /* Prevent the iOS long-press / text selection while swiping cards. */
+  .no-select {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+@layer components {
+  /* Ambient tropical-sunset glow behind every screen. */
+  .cabo-bg {
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(255, 61, 119, 0.28), transparent 55%),
+      radial-gradient(110% 70% at 100% 10%, rgba(255, 179, 71, 0.22), transparent 50%),
+      radial-gradient(120% 80% at 0% 100%, rgba(57, 192, 214, 0.18), transparent 55%),
+      theme('colors.night.900');
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+  }
+}

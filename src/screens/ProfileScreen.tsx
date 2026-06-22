@@ -1,0 +1,132 @@
+import { useNavigate, useParams } from 'react-router-dom';
+import { BackButton, Button, Screen } from '../components/ui';
+import { PlayerAvatar } from '../components/PlayerAvatar';
+import { deletePlayer, getPlayer, getResultsForPlayer } from '../store/storage';
+import { useResults } from '../store/useStore';
+import { hotOrNotStats } from '../games/hotOrNot/stats';
+import { formatDate } from '../lib/util';
+
+export function ProfileScreen() {
+  const { playerId = '' } = useParams();
+  const navigate = useNavigate();
+  useResults(); // re-render when results change
+  const player = getPlayer(playerId);
+
+  if (!player) {
+    return (
+      <Screen>
+        <div className="flex flex-1 flex-col items-center justify-center gap-4">
+          <p className="font-display text-2xl">Player not found.</p>
+          <Button onClick={() => navigate('/')}>Home</Button>
+        </div>
+      </Screen>
+    );
+  }
+
+  const results = getResultsForPlayer(player.id);
+  const stats = hotOrNotStats(results);
+
+  return (
+    <Screen>
+      <BackButton onClick={() => navigate('/')} />
+
+      <div className="flex flex-col items-center pt-2 text-center">
+        <PlayerAvatar player={player} size={88} />
+        <h1 className="mt-3 font-display text-3xl font-extrabold">{player.name}</h1>
+        <p className="font-body text-sm font-bold capitalize text-white/40">{player.gender}</p>
+      </div>
+
+      <div className="mb-6 mt-6 grid grid-cols-3 gap-3">
+        <Stat label="Games" value={stats.gamesPlayed} />
+        <Stat label="Swipes" value={stats.totalSwipes} />
+        <Stat label="Hot %" value={`${Math.round(stats.hotRate * 100)}%`} accent />
+      </div>
+
+      <div className="flex-1 overflow-y-auto">
+        <h2 className="mb-2 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
+          Hot or Not 🔥
+        </h2>
+
+        {stats.totalSwipes === 0 ? (
+          <p className="rounded-2xl glass px-4 py-6 text-center font-body text-white/50">
+            {player.name} hasn't played yet.
+          </p>
+        ) : (
+          <>
+            <Chips title="Called Hot" tone="hot" names={stats.hotPicks} />
+            <Chips title="Called Not" tone="not" names={stats.notPicks} />
+
+            <h3 className="mb-2 mt-5 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
+              History
+            </h3>
+            <div className="flex flex-col gap-2">
+              {results.map((r) => {
+                const hot = r.data.choices.filter((c) => c.hot).length;
+                return (
+                  <div
+                    key={r.id}
+                    className="glass flex items-center justify-between rounded-2xl px-4 py-3"
+                  >
+                    <span className="font-display font-extrabold">Hot or Not</span>
+                    <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
+                    <span className="font-display font-extrabold text-hot">
+                      {hot}/{r.data.choices.length} 🔥
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="mt-4 flex flex-col gap-3">
+        <Button onClick={() => navigate('/play/hot-or-not/run/' + player.id)}>Play again</Button>
+        <button
+          onClick={() => {
+            if (confirm(`Delete ${player.name} and all their stats? This can't be undone.`)) {
+              deletePlayer(player.id);
+              navigate('/');
+            }
+          }}
+          className="py-2 font-body text-sm font-bold text-white/30 active:scale-95"
+        >
+          Delete player
+        </button>
+      </div>
+    </Screen>
+  );
+}
+
+function Stat({ label, value, accent }: { label: string; value: number | string; accent?: boolean }) {
+  return (
+    <div className="glass rounded-2xl px-2 py-4 text-center">
+      <div className={`font-display text-3xl font-extrabold ${accent ? 'text-hot' : 'text-white'}`}>
+        {value}
+      </div>
+      <div className="font-body text-xs font-bold uppercase tracking-widest text-white/40">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function Chips({ title, names, tone }: { title: string; names: string[]; tone: 'hot' | 'not' }) {
+  if (names.length === 0) return null;
+  const cls =
+    tone === 'hot' ? 'bg-hot/15 text-hot-glow border-hot/40' : 'bg-not/15 text-not-glow border-not/40';
+  return (
+    <div className="mb-4">
+      <p className="mb-2 font-body text-xs font-extrabold uppercase tracking-widest text-white/40">
+        {title}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {names.map((n) => (
+          <span key={n} className={`rounded-full border px-3 py-1 font-body text-sm font-bold ${cls}`}>
+            {n}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
