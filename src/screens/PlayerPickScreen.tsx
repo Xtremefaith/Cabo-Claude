@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BackButton, Button, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
+import { PhotoPicker } from '../components/PhotoPicker';
 import { GameLogo } from '../components/GameLogo';
 import { getGame } from '../games/registry';
 import { usePlayers } from '../store/useStore';
@@ -30,18 +31,20 @@ export function PlayerPickScreen() {
     );
   }
 
-  const start = (playerId: string) => navigate(`/play/${gameId}/run/${playerId}`);
+  // After choosing who's playing, send them to pick a category for this round.
+  const start = (playerId: string) => navigate(`/play/${gameId}/category/${playerId}`);
 
   if (mode === 'create') {
     return (
       <CreatePlayer
         onCancel={() => (players.length ? setMode('pick') : navigate('/'))}
-        onCreate={(name, gender) => {
+        onCreate={(name, gender, photo) => {
           const player = {
             id: uid(),
             name: name.trim(),
             gender,
             color: pickPlayerColor(players.length),
+            photo,
             createdAt: Date.now(),
           };
           addPlayer(player);
@@ -95,11 +98,12 @@ function CreatePlayer({
   onCreate,
   onCancel,
 }: {
-  onCreate: (name: string, gender: Gender) => void;
+  onCreate: (name: string, gender: Gender, photo?: string) => void;
   onCancel: () => void;
 }) {
   const [name, setName] = useState('');
   const [gender, setGender] = useState<Gender | null>(null);
+  const [photo, setPhoto] = useState<string>();
   const canStart = name.trim().length > 0 && gender !== null;
 
   return (
@@ -110,12 +114,32 @@ function CreatePlayer({
         animate={{ opacity: 1, y: 0 }}
         onSubmit={(e) => {
           e.preventDefault();
-          if (canStart) onCreate(name, gender!);
+          if (canStart) onCreate(name, gender!, photo);
         }}
         className="flex flex-1 flex-col"
       >
         <h1 className="mt-4 font-display text-3xl font-extrabold">New player</h1>
         <p className="font-body text-white/50">We'll save you for future games too.</p>
+
+        <div className="mt-6 flex flex-col items-center gap-2">
+          <PhotoPicker onPhoto={setPhoto}>
+            {photo ? (
+              <img
+                src={photo}
+                alt="Your photo"
+                draggable={false}
+                className="h-24 w-24 rounded-full object-cover shadow-card"
+              />
+            ) : (
+              <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-dashed border-white/20 bg-white/5 text-3xl text-white/40">
+                🙂
+              </div>
+            )}
+          </PhotoPicker>
+          <p className="font-body text-xs font-bold uppercase tracking-widest text-white/40">
+            {photo ? 'Tap to change' : 'Add a photo (optional)'}
+          </p>
+        </div>
 
         <label className="mt-8 mb-2 block font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
           Your name
@@ -153,7 +177,7 @@ function CreatePlayer({
           })}
         </div>
         <p className="mt-3 font-body text-xs font-bold text-white/35">
-          Hot or Not shows you the opposite sex from the Comedian category.
+          Hot or Not shows you the opposite sex from the category you pick next.
         </p>
 
         <div className="flex-1" />

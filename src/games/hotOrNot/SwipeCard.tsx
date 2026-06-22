@@ -9,6 +9,9 @@ export interface SwipeCardHandle {
 
 interface Props {
   candidate: Candidate;
+  /** Emoji + singular label for the category tag, e.g. "🎬" / "Actor". */
+  categoryEmoji: string;
+  categoryLabel: string;
   imageUrl: string | null | undefined;
   onDecide: (hot: boolean) => void;
 }
@@ -22,7 +25,7 @@ const VELOCITY_THRESHOLD = 600;
  * screen and reports the decision exactly once.
  */
 export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
-  { candidate, imageUrl, onDecide },
+  { candidate, categoryEmoji, categoryLabel, imageUrl, onDecide },
   ref,
 ) {
   const x = useMotionValue(0);
@@ -72,7 +75,7 @@ export const SwipeCard = forwardRef<SwipeCardHandle, Props>(function SwipeCard(
 
         {/* category tag */}
         <span className="absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-body text-xs font-extrabold uppercase tracking-widest text-white/80 backdrop-blur">
-          🎤 Comedian
+          {categoryEmoji} {categoryLabel}
         </span>
 
         {/* HOT stamp */}

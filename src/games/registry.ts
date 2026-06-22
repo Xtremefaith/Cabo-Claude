@@ -10,6 +10,8 @@ export interface GameMeta {
   emoji: string;
   /** Tailwind gradient classes for the game's fallback tile. */
   gradient: string;
+  /** Entry route when the tile is tapped. */
+  route: string;
   /**
    * Optional logo art. Drop the file at the given path under `public/` and it
    * replaces the emoji tile automatically; otherwise the gradient tile shows.
@@ -22,10 +24,21 @@ export const GAMES: GameMeta[] = [
   {
     id: 'hot-or-not',
     title: 'Hot or Not',
-    tagline: 'Swipe 10 comedians. Reveal at dinner.',
+    tagline: 'Pick a category, swipe 10. Reveal at dinner.',
     emoji: '🔥',
     gradient: 'from-hot via-sun to-sun',
+    route: '/play/hot-or-not',
     logo: './games/hot-or-not.png',
+    available: true,
+  },
+  {
+    id: 'most-likely-to',
+    title: 'Most Likely To',
+    tagline: 'Vote your crew by their pics. See who gets crowned.',
+    emoji: '🏆',
+    gradient: 'from-indigo-500 via-purple-500 to-hot',
+    route: '/play/most-likely-to/run',
+    logo: './games/most-likely-to.png',
     available: true,
   },
 ];
@@ -42,7 +55,6 @@ export interface ComingSoonGame {
 }
 
 export const COMING_SOON: ComingSoonGame[] = [
-  { title: 'Most Likely To', tagline: 'Vote who fits the bill', emoji: '🏆' },
   { title: 'Hot Takes', tagline: 'Defend your spiciest opinion', emoji: '🌶️' },
   { title: 'Would You Rather', tagline: 'Pick your poison', emoji: '🤔' },
   { title: 'Guess Who Said It', tagline: 'Match the quote to the player', emoji: '💬' },

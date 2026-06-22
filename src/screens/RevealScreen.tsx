@@ -6,7 +6,7 @@ import { PlayerAvatar } from '../components/PlayerAvatar';
 import { Headshot } from '../components/Headshot';
 import { usePlayers, useResults } from '../store/useStore';
 import { buildReveal } from '../games/hotOrNot/stats';
-import { COMEDIANS } from '../data/comedians';
+import { CELEBRITIES } from '../data/celebrities';
 import { resolveHeadshots } from '../lib/wikiImages';
 
 export function RevealScreen() {
@@ -17,7 +17,7 @@ export function RevealScreen() {
   const [images, setImages] = useState<Record<string, string | null>>({});
 
   const rows = useMemo(() => buildReveal(results), [results]);
-  const byName = useMemo(() => new Map(COMEDIANS.map((c) => [c.name, c])), []);
+  const byName = useMemo(() => new Map(CELEBRITIES.map((c) => [c.name, c])), []);
   const playerById = useMemo(() => new Map(players.map((p) => [p.id, p])), [players]);
 
   useEffect(() => {

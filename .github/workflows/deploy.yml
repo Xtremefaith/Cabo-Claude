@@ -36,6 +36,11 @@ jobs:
 
       - run: yarn install --frozen-lockfile
       - run: yarn build
+        env:
+          # Publishable values — safe to expose in the client; access is
+          # enforced by Supabase Row-Level Security.
+          VITE_SUPABASE_URL: https://ddlrfzhejracvpqxeaos.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_42qG6OjbbOtzaqSzZOjsGg_O-xNIXvB
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -5,7 +5,7 @@ import { Button, Screen } from '../../components/ui';
 import { Headshot } from '../../components/Headshot';
 import { PlayerAvatar } from '../../components/PlayerAvatar';
 import { SwipeCard, type SwipeCardHandle } from './SwipeCard';
-import { comediansByGender } from '../../data/comedians';
+import { candidatesBy, getCategory } from '../../data/celebrities';
 import { resolveHeadshots } from '../../lib/wikiImages';
 import { addResult, getPlayer } from '../../store/storage';
 import { sample, uid } from '../../lib/util';
@@ -14,19 +14,21 @@ import type { Candidate, HotOrNotChoice, Player } from '../../types';
 const DECK_SIZE = 10;
 
 export function HotOrNotScreen() {
-  const { playerId = '' } = useParams();
+  const { playerId = '', category = '' } = useParams();
   const navigate = useNavigate();
   const player = getPlayer(playerId);
+  const categoryMeta = getCategory(category);
 
-  // Build the deck exactly ONCE for this game: 10 comedians of the opposite sex
-  // from the player's chosen gender. We use lazy state (not useMemo keyed on the
-  // `player` object, whose identity changes every render) so the deck never
-  // reshuffles mid-game and the headshot effect doesn't loop forever.
+  // Build the deck exactly ONCE for this game: 10 people from the chosen
+  // category of the opposite sex from the player's chosen gender. We use lazy
+  // state (not useMemo keyed on the `player` object, whose identity changes
+  // every render) so the deck never reshuffles mid-game and the headshot effect
+  // doesn't loop forever.
   const [deck] = useState<Candidate[]>(() => {
     const p = getPlayer(playerId);
-    if (!p) return [];
+    if (!p || !categoryMeta) return [];
     const opposite = p.gender === 'male' ? 'female' : 'male';
-    return sample(comediansByGender(opposite), DECK_SIZE);
+    return sample(candidatesBy(categoryMeta.id, opposite), DECK_SIZE);
   });
 
   const [images, setImages] = useState<Record<string, string | null>>();
@@ -46,11 +48,13 @@ export function HotOrNotScreen() {
     };
   }, [deck]);
 
-  if (!player) {
+  if (!player || !categoryMeta) {
     return (
       <Screen>
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-          <p className="font-display text-2xl">Player not found.</p>
+          <p className="font-display text-2xl">
+            {!player ? 'Player not found.' : 'Unknown category.'}
+          </p>
           <Button onClick={() => navigate('/')}>Home</Button>
         </div>
       </Screen>
@@ -103,6 +107,8 @@ export function HotOrNotScreen() {
           key={current.id}
           ref={cardRef}
           candidate={current}
+          categoryEmoji={categoryMeta.emoji}
+          categoryLabel={categoryMeta.label}
           imageUrl={images[current.wikiTitle]}
           onDecide={handleDecide}
         />

@@ -5,13 +5,17 @@ import { PlayerAvatar } from '../components/PlayerAvatar';
 import { GameTile, LockedTile } from '../components/GameTile';
 import { HomeBackground } from '../components/HomeBackground';
 import { COMING_SOON, GAMES } from '../games/registry';
-import { usePlayers, useResults } from '../store/useStore';
+import { usePlayers, useResults, useGroup } from '../store/useStore';
+import { DEFAULT_SPICE, SPICE_LABELS } from '../data/spice';
 
 export function HomeScreen() {
   const navigate = useNavigate();
   const players = usePlayers();
   const results = useResults();
-  const hasResults = results.length > 0;
+  const group = useGroup();
+  const hasHotResults = results.some((r) => r.gameId === 'hot-or-not');
+  const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
+  const spice = group?.settings?.spice ?? DEFAULT_SPICE;
 
   return (
     <Screen backdrop={<HomeBackground />}>
@@ -20,6 +24,58 @@ export function HomeScreen() {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-1 flex-col"
       >
+        {/* Group banner (cloud mode) — tap to manage */}
+        {group && (
+          <button
+            onClick={() => navigate('/manage')}
+            className="glass mt-1 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-left active:scale-[0.99]"
+          >
+            {group.photo ? (
+              <img
+                src={group.photo}
+                alt={group.name}
+                draggable={false}
+                className="h-9 w-9 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-lg">👥</span>
+            )}
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-display text-sm font-extrabold leading-tight">
+                {group.name}
+              </p>
+              <p className="font-body text-xs font-bold text-white/45">
+                Code <span className="tracking-widest text-sun">{group.code}</span>
+              </p>
+            </div>
+            <span className="font-display text-xs font-extrabold uppercase tracking-widest text-white/50">
+              Manage ›
+            </span>
+          </button>
+        )}
+
+        {/* Spice meter — group-wide setting, visible to everyone playing */}
+        {group && (
+          <button
+            onClick={() => navigate('/manage')}
+            className="glass mt-2 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-left active:scale-[0.99]"
+          >
+            <span className="font-display text-xs font-extrabold uppercase tracking-widest text-white/50">
+              Spice
+            </span>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span key={n} className={`text-lg ${n <= spice ? '' : 'opacity-20 grayscale'}`}>
+                  🌶️
+                </span>
+              ))}
+            </div>
+            <span className="ml-auto truncate font-display text-sm font-extrabold text-hot">
+              {SPICE_LABELS[spice]}
+            </span>
+          </button>
+        )}
+
         {/* Hero logo */}
         <motion.div
           className="flex justify-center pt-6"
@@ -37,7 +93,7 @@ export function HomeScreen() {
 
         <div className="flex flex-col gap-3">
           {GAMES.map((g) => (
-            <GameTile key={g.id} game={g} onClick={() => navigate(`/play/${g.id}`)} />
+            <GameTile key={g.id} game={g} onClick={() => navigate(g.route)} />
           ))}
         </div>
 
@@ -56,14 +112,24 @@ export function HomeScreen() {
           <p className="font-display text-sm font-extrabold uppercase tracking-widest text-white/60">
             👥 Players
           </p>
-          {hasResults && (
-            <button
-              onClick={() => navigate('/reveal')}
-              className="font-display text-sm font-extrabold text-sun active:scale-95"
-            >
-              The Reveal 👀
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            {hasMltResults && (
+              <button
+                onClick={() => navigate('/play/most-likely-to/results')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                🏆 Results
+              </button>
+            )}
+            {hasHotResults && (
+              <button
+                onClick={() => navigate('/reveal')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                The Reveal 👀
+              </button>
+            )}
+          </div>
         </div>
 
         {players.length === 0 ? (
