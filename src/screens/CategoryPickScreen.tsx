@@ -5,12 +5,17 @@ import { PlayerAvatar } from '../components/PlayerAvatar';
 import { getGame } from '../games/registry';
 import { CATEGORIES } from '../data/celebrities';
 import { getPlayer } from '../store/storage';
+import { useMyPlayerId } from '../store/useStore';
 
 export function CategoryPickScreen() {
   const { gameId = '', playerId = '' } = useParams();
   const navigate = useNavigate();
+  const myPlayerId = useMyPlayerId();
   const game = getGame(gameId);
   const player = getPlayer(playerId);
+  // When the player is the logged-in device (cloud mode), the "who's playing?"
+  // picker is skipped — so Back should go Home instead of looping through it.
+  const back = () => navigate(myPlayerId === playerId ? '/' : `/play/${gameId}`);
 
   if (!game || !player) {
     return (
@@ -30,7 +35,7 @@ export function CategoryPickScreen() {
 
   return (
     <Screen>
-      <BackButton onClick={() => navigate(`/play/${gameId}`)} />
+      <BackButton onClick={back} />
 
       <div className="mb-6 text-center">
         <div className="mb-2 flex items-center justify-center gap-2">
