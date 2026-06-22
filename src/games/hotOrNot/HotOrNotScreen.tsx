@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button, Screen } from '../../components/ui';
@@ -18,12 +18,16 @@ export function HotOrNotScreen() {
   const navigate = useNavigate();
   const player = getPlayer(playerId);
 
-  // Opposite sex of the player's chosen gender.
-  const deck = useMemo<Candidate[]>(() => {
-    if (!player) return [];
-    const opposite = player.gender === 'male' ? 'female' : 'male';
+  // Build the deck exactly ONCE for this game: 10 comedians of the opposite sex
+  // from the player's chosen gender. We use lazy state (not useMemo keyed on the
+  // `player` object, whose identity changes every render) so the deck never
+  // reshuffles mid-game and the headshot effect doesn't loop forever.
+  const [deck] = useState<Candidate[]>(() => {
+    const p = getPlayer(playerId);
+    if (!p) return [];
+    const opposite = p.gender === 'male' ? 'female' : 'male';
     return sample(comediansByGender(opposite), DECK_SIZE);
-  }, [player]);
+  });
 
   const [images, setImages] = useState<Record<string, string | null>>();
   const [index, setIndex] = useState(0);

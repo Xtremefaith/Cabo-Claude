@@ -50,7 +50,16 @@ export async function resolveHeadshots(
   });
 
   try {
-    const res = await fetch(`${ENDPOINT}?${params.toString()}`);
+    // Guard against a hung request: abort after 8s so the game can start with
+    // fallback avatars rather than getting stuck on the loading screen.
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    let res: Response;
+    try {
+      res = await fetch(`${ENDPOINT}?${params.toString()}`, { signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
     if (!res.ok) throw new Error(`wiki ${res.status}`);
     const json = (await res.json()) as WikiQueryResponse;
 
