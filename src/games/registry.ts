@@ -22,7 +22,7 @@ export const GAMES: GameMeta[] = [
   {
     id: 'hot-or-not',
     title: 'Hot or Not',
-    tagline: 'Swipe 10 comedians. Reveal at dinner.',
+    tagline: 'Pick a category, swipe 10. Reveal at dinner.',
     emoji: '🔥',
     gradient: 'from-hot via-sun to-sun',
     logo: './games/hot-or-not.png',

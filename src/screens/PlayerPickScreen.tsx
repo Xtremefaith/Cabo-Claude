@@ -30,7 +30,8 @@ export function PlayerPickScreen() {
     );
   }
 
-  const start = (playerId: string) => navigate(`/play/${gameId}/run/${playerId}`);
+  // After choosing who's playing, send them to pick a category for this round.
+  const start = (playerId: string) => navigate(`/play/${gameId}/category/${playerId}`);
 
   if (mode === 'create') {
     return (
@@ -153,7 +154,7 @@ function CreatePlayer({
           })}
         </div>
         <p className="mt-3 font-body text-xs font-bold text-white/35">
-          Hot or Not shows you the opposite sex from the Comedian category.
+          Hot or Not shows you the opposite sex from the category you pick next.
         </p>
 
         <div className="flex-1" />

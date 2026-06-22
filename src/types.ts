@@ -2,6 +2,9 @@
 
 export type Gender = 'male' | 'female';
 
+/** A roster category the player can pick from in Hot or Not. */
+export type CategoryId = 'comedians' | 'actors' | 'musicians' | 'athletes';
+
 export interface Player {
   id: string;
   name: string;
@@ -11,11 +14,13 @@ export interface Player {
   createdAt: number;
 }
 
-/** A swipeable candidate. For now these are comedians, but the shape is generic. */
+/** A swipeable candidate (comedian, actor, musician, athlete, …). */
 export interface Candidate {
   id: string;
   name: string;
   gender: Gender;
+  /** Which roster category this candidate belongs to. */
+  category: CategoryId;
   /** Wikipedia page title used to resolve a headshot at runtime. */
   wikiTitle: string;
   /** Short "known for" blurb shown on the card. */
