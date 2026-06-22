@@ -5,12 +5,14 @@ import { PlayerAvatar } from '../components/PlayerAvatar';
 import { GameTile, LockedTile } from '../components/GameTile';
 import { HomeBackground } from '../components/HomeBackground';
 import { COMING_SOON, GAMES } from '../games/registry';
-import { usePlayers, useResults } from '../store/useStore';
+import { usePlayers, useResults, useGroup } from '../store/useStore';
+import { leaveGroup } from '../store/storage';
 
 export function HomeScreen() {
   const navigate = useNavigate();
   const players = usePlayers();
   const results = useResults();
+  const group = useGroup();
   const hasResults = results.length > 0;
 
   return (
@@ -20,6 +22,31 @@ export function HomeScreen() {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-1 flex-col"
       >
+        {/* Group banner (cloud mode) */}
+        {group && (
+          <div className="glass mt-1 flex items-center gap-3 rounded-2xl px-4 py-2.5">
+            <span className="text-lg">👥</span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-display text-sm font-extrabold leading-tight">
+                {group.name}
+              </p>
+              <p className="font-body text-xs font-bold text-white/45">
+                Code <span className="tracking-widest text-sun">{group.code}</span>
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                if (confirm('Leave this group on this device? You can rejoin with the code + password.')) {
+                  leaveGroup();
+                }
+              }}
+              className="font-display text-xs font-extrabold uppercase tracking-widest text-white/50 active:scale-95"
+            >
+              Switch
+            </button>
+          </div>
+        )}
+
         {/* Hero logo */}
         <motion.div
           className="flex justify-center pt-6"
