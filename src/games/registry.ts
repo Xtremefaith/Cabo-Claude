@@ -38,6 +38,7 @@ export const GAMES: GameMeta[] = [
     emoji: '🏆',
     gradient: 'from-indigo-500 via-purple-500 to-hot',
     route: '/play/most-likely-to/run',
+    logo: './games/most-likely-to.png',
     available: true,
   },
 ];
