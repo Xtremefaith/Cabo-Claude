@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { BackButton, Button, Screen } from '../components/ui';
 import { PhotoPicker } from '../components/PhotoPicker';
 import { useGroup } from '../store/useStore';
@@ -11,6 +12,7 @@ export function ManageGroupScreen() {
   const group = useGroup();
   const [name, setName] = useState(group?.name ?? '');
   const [copied, setCopied] = useState(false);
+  const [showQr, setShowQr] = useState(false);
 
   if (!group) {
     return (
@@ -113,6 +115,32 @@ export function ManageGroupScreen() {
             {copied ? 'Copied!' : 'Copy link'}
           </Button>
         </div>
+
+        <button
+          onClick={() => setShowQr((v) => !v)}
+          className="mt-3 w-full rounded-2xl border border-white/10 bg-white/5 py-3 font-display text-sm font-extrabold uppercase tracking-widest text-white/70 transition active:scale-[0.98]"
+        >
+          {showQr ? 'Hide QR code' : 'Show QR code 📷'}
+        </button>
+
+        {showQr && (
+          <div className="mt-3 flex flex-col items-center gap-3">
+            <div className="rounded-2xl bg-white p-4 shadow-card">
+              <QRCodeSVG
+                value={inviteLink}
+                size={224}
+                level="M"
+                marginSize={0}
+                aria-label="Scan to join the group"
+              />
+            </div>
+            <p className="text-center font-body text-xs font-bold text-white/45">
+              Hold this up — everyone scans with their camera to jump straight to the join screen
+              with the code filled in.
+            </p>
+          </div>
+        )}
+
         <p className="mt-3 font-body text-xs font-bold text-white/35">
           The link fills in the code automatically. Tell them the password yourself — it's never in
           the link.
