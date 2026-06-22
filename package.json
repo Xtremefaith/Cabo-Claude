@@ -1,9 +1,9 @@
 {
-  "name": "cabo-claude",
+  "name": "claude-cabo",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Cabo Claude — an arcade of social party games. First game: Hot or Not.",
+  "description": "Claude Cabo — a club of social party games. First game: Hot or Not.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

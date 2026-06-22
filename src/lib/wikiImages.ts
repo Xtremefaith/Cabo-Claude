@@ -5,7 +5,7 @@
 // supports CORS via `origin=*`, so a plain browser fetch works. Resolved URLs
 // are cached in localStorage so a deck only hits the network once.
 
-const CACHE_PREFIX = 'cabo-claude:img:';
+const CACHE_PREFIX = 'claude-cabo:img:';
 const ENDPOINT = 'https://en.wikipedia.org/w/api.php';
 
 function cacheGet(title: string): string | null | undefined {

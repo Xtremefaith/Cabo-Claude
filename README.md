@@ -1,10 +1,10 @@
-# 🌴 Cabo Claude
+# 🌴 Claude Cabo
 
-An arcade of social party games for dinner-table chaos. First game up: **Hot or Not** 🔥
+Welcome to the club (Cabo). A club of social party games for dinner-table chaos. First game up: **Hot or Not** 🔥
 
 ## Hot or Not
 
-1. **Begin** from the arcade home.
+1. **Begin** from the club home.
 2. **Enter your name** and **pick your gender** — you're saved as a player for every future game.
 3. Swipe through **10 comedians** of the opposite sex: **right = Hot 🔥**, **left = Not 👎** (or tap the buttons).
 4. **Game over** — see your Hot picks.
@@ -33,7 +33,7 @@ yarn preview    # preview the production build
 
 ## Adding more games
 
-The arcade is built around a small game registry:
+The club is built around a small game registry:
 
 - Register a game in [`src/games/registry.ts`](src/games/registry.ts) — it appears on the home screen automatically.
 - Players are shared across all games (`src/store/`), and results are stored per game (`GameResult.gameId`), so each game can compute its own stats and profile section.

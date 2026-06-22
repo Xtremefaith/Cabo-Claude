@@ -3,7 +3,7 @@
 
 import type { GameResult, Player } from '../types';
 
-const KEY = 'cabo-claude:v1';
+const KEY = 'claude-cabo:v1';
 
 interface DB {
   players: Player[];

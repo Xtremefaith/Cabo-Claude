@@ -240,7 +240,7 @@ function GameOver({
             {player.name}'s Profile
           </Button>
           <Button variant="ghost" onClick={() => navigate('/')}>
-            Back to Arcade
+            Back to the Club
           </Button>
         </div>
       </motion.div>

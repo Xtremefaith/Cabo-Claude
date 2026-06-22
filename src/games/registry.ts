@@ -1,4 +1,4 @@
-// The arcade's game registry. Add future games here and they appear on the
+// The club's game registry. Add future games here and they appear on the
 // home screen automatically. Each game owns its own route under /play/:gameId.
 
 import type { GameId } from '../types';

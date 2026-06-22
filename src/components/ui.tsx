@@ -74,14 +74,14 @@ export function Logo({ small = false }: { small?: boolean }) {
           small ? 'text-2xl' : 'text-5xl'
         }`}
       >
+        <span className="text-white">Claude</span>{' '}
         <span className="bg-gradient-to-r from-hot via-sun to-not bg-clip-text text-transparent">
           Cabo
-        </span>{' '}
-        <span className="text-white">Claude</span>
+        </span>
       </h1>
       {!small && (
         <p className="mt-2 font-body text-sm font-bold uppercase tracking-[0.3em] text-white/50">
-          Arcade
+          Club
         </p>
       )}
     </div>

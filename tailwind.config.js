@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Cabo Claude palette: a tropical-sunset neon arcade.
+        // Claude Cabo palette: a tropical-sunset neon nightclub.
         night: {
           900: '#0c0a1f', // deep night sky (app background)
           800: '#15102e',

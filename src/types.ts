@@ -1,4 +1,4 @@
-// Core shared types for the Cabo Claude arcade.
+// Core shared types for the Claude Cabo club.
 
 export type Gender = 'male' | 'female';
 
