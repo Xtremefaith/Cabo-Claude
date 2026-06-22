@@ -1,0 +1,12 @@
+# Netlify deploy config (alternative to Vercel). Importing the repo on
+# netlify.com auto-uses these settings — no manual fields to fill in.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Single-page-app fallback (harmless with HashRouter; future-proofs a switch
+# to BrowserRouter).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
