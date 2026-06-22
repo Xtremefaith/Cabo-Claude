@@ -7,6 +7,8 @@ import { RevealScreen } from './screens/RevealScreen';
 import { GroupGate } from './screens/GroupGate';
 import { PlayerSetupScreen } from './screens/PlayerSetupScreen';
 import { HotOrNotScreen } from './games/hotOrNot/HotOrNotScreen';
+import { MostLikelyScreen } from './games/mostLikelyTo/MostLikelyScreen';
+import { MostLikelyResultsScreen } from './games/mostLikelyTo/ResultsScreen';
 import { Screen } from './components/ui';
 import { isCloud } from './store/storage';
 import { useGroup, useMyPlayerId, useReady } from './store/useStore';
@@ -40,6 +42,8 @@ export default function App() {
         <Route path="/play/:gameId" element={<PlayerPickScreen />} />
         <Route path="/play/:gameId/category/:playerId" element={<CategoryPickScreen />} />
         <Route path="/play/:gameId/run/:playerId/:category" element={<HotOrNotScreen />} />
+        <Route path="/play/most-likely-to/run" element={<MostLikelyScreen />} />
+        <Route path="/play/most-likely-to/results" element={<MostLikelyResultsScreen />} />
         <Route path="/players/:playerId" element={<ProfileScreen />} />
         <Route path="/reveal" element={<RevealScreen />} />
         <Route path="*" element={<Navigate to="/" replace />} />

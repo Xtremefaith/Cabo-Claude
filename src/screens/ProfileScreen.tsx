@@ -86,7 +86,7 @@ export function ProfileScreen() {
 
         {stats.totalSwipes === 0 ? (
           <p className="rounded-2xl glass px-4 py-6 text-center font-body text-white/50">
-            {player.name} hasn't played yet.
+            No Hot or Not picks yet.
           </p>
         ) : (
           <>
@@ -95,26 +95,31 @@ export function ProfileScreen() {
             </p>
             <Chips title="Called Hot" tone="hot" names={stats.hotPicks} onSelect={openPhoto} />
             <Chips title="Called Not" tone="not" names={stats.notPicks} onSelect={openPhoto} />
+          </>
+        )}
 
+        {results.length > 0 && (
+          <>
             <h3 className="mb-2 mt-5 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
               History
             </h3>
             <div className="flex flex-col gap-2">
-              {results.map((r) => {
-                const hot = r.data.choices.filter((c) => c.hot).length;
-                return (
-                  <div
-                    key={r.id}
-                    className="glass flex items-center justify-between rounded-2xl px-4 py-3"
-                  >
-                    <span className="font-display font-extrabold">Hot or Not</span>
-                    <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
-                    <span className="font-display font-extrabold text-hot">
-                      {hot}/{r.data.choices.length} 🔥
-                    </span>
-                  </div>
-                );
-              })}
+              {results.map((r) => (
+                <div
+                  key={r.id}
+                  className="glass flex items-center justify-between rounded-2xl px-4 py-3"
+                >
+                  <span className="font-display font-extrabold">
+                    {r.gameId === 'hot-or-not' ? 'Hot or Not' : 'Most Likely To'}
+                  </span>
+                  <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
+                  <span className="font-display font-extrabold text-hot">
+                    {r.gameId === 'hot-or-not'
+                      ? `${r.data.choices.filter((c) => c.hot).length}/${r.data.choices.length} 🔥`
+                      : `${r.data.votes.length} votes 🏆`}
+                  </span>
+                </div>
+              ))}
             </div>
           </>
         )}

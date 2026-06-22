@@ -13,7 +13,8 @@ export function HomeScreen() {
   const players = usePlayers();
   const results = useResults();
   const group = useGroup();
-  const hasResults = results.length > 0;
+  const hasHotResults = results.some((r) => r.gameId === 'hot-or-not');
+  const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
 
   return (
     <Screen backdrop={<HomeBackground />}>
@@ -64,7 +65,7 @@ export function HomeScreen() {
 
         <div className="flex flex-col gap-3">
           {GAMES.map((g) => (
-            <GameTile key={g.id} game={g} onClick={() => navigate(`/play/${g.id}`)} />
+            <GameTile key={g.id} game={g} onClick={() => navigate(g.route)} />
           ))}
         </div>
 
@@ -83,14 +84,24 @@ export function HomeScreen() {
           <p className="font-display text-sm font-extrabold uppercase tracking-widest text-white/60">
             👥 Players
           </p>
-          {hasResults && (
-            <button
-              onClick={() => navigate('/reveal')}
-              className="font-display text-sm font-extrabold text-sun active:scale-95"
-            >
-              The Reveal 👀
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            {hasMltResults && (
+              <button
+                onClick={() => navigate('/play/most-likely-to/results')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                🏆 Results
+              </button>
+            )}
+            {hasHotResults && (
+              <button
+                onClick={() => navigate('/reveal')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                The Reveal 👀
+              </button>
+            )}
+          </div>
         </div>
 
         {players.length === 0 ? (

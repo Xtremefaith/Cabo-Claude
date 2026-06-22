@@ -318,7 +318,7 @@ function rowToResult(r: any): GameResult {
     playerId: r.player_id,
     playedAt: new Date(r.played_at).getTime(),
     data: r.data,
-  };
+  } as GameResult;
 }
 
 // --------------------------------------------------------- local mode ---
