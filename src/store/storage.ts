@@ -29,6 +29,7 @@ export interface GroupInfo {
   id: string;
   code: string;
   name: string;
+  photo?: string;
 }
 
 const cloud = supabaseConfigured;
@@ -214,6 +215,29 @@ export async function joinGroup(code: string, password: string): Promise<GroupIn
   return g;
 }
 
+/** Update the current group's name and/or photo (synced to all members). */
+export async function updateGroup(patch: { name?: string; photo?: string }) {
+  if (!group) return;
+  // Optimistic local update for a snappy UI.
+  group = { ...group, ...patch };
+  localStorage.setItem(GROUP_KEY, JSON.stringify(group));
+  notify();
+  if (!supabase) return;
+  const { data, error } = await supabase.rpc('update_group', {
+    p_group_id: group.id,
+    p_name: patch.name ?? null,
+    p_photo: patch.photo ?? null,
+    p_settings: null,
+  });
+  if (error) {
+    logError({ error });
+    return;
+  }
+  group = rowToGroup(data);
+  localStorage.setItem(GROUP_KEY, JSON.stringify(group));
+  notify();
+}
+
 /** Forget the group on this device (membership in the DB is kept). */
 export function leaveGroup() {
   localStorage.removeItem(GROUP_KEY);
@@ -296,8 +320,9 @@ function rowToGroup(data: unknown): GroupInfo {
     id: string;
     code: string;
     name: string;
+    photo?: string | null;
   };
-  return { id: r.id, code: r.code, name: r.name };
+  return { id: r.id, code: r.code, name: r.name, photo: r.photo ?? undefined };
 }
 
 function rowToPlayer(r: any): Player {

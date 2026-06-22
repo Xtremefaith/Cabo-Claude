@@ -6,7 +6,6 @@ import { GameTile, LockedTile } from '../components/GameTile';
 import { HomeBackground } from '../components/HomeBackground';
 import { COMING_SOON, GAMES } from '../games/registry';
 import { usePlayers, useResults, useGroup } from '../store/useStore';
-import { leaveGroup } from '../store/storage';
 
 export function HomeScreen() {
   const navigate = useNavigate();
@@ -23,10 +22,22 @@ export function HomeScreen() {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-1 flex-col"
       >
-        {/* Group banner (cloud mode) */}
+        {/* Group banner (cloud mode) — tap to manage */}
         {group && (
-          <div className="glass mt-1 flex items-center gap-3 rounded-2xl px-4 py-2.5">
-            <span className="text-lg">👥</span>
+          <button
+            onClick={() => navigate('/manage')}
+            className="glass mt-1 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-left active:scale-[0.99]"
+          >
+            {group.photo ? (
+              <img
+                src={group.photo}
+                alt={group.name}
+                draggable={false}
+                className="h-9 w-9 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-lg">👥</span>
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate font-display text-sm font-extrabold leading-tight">
                 {group.name}
@@ -35,17 +46,10 @@ export function HomeScreen() {
                 Code <span className="tracking-widest text-sun">{group.code}</span>
               </p>
             </div>
-            <button
-              onClick={() => {
-                if (confirm('Leave this group on this device? You can rejoin with the code + password.')) {
-                  leaveGroup();
-                }
-              }}
-              className="font-display text-xs font-extrabold uppercase tracking-widest text-white/50 active:scale-95"
-            >
-              Switch
-            </button>
-          </div>
+            <span className="font-display text-xs font-extrabold uppercase tracking-widest text-white/50">
+              Manage ›
+            </span>
+          </button>
         )}
 
         {/* Hero logo */}

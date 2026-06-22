@@ -9,10 +9,16 @@ import { createGroup, joinGroup } from '../store/storage';
  * and the shared password. The password is verified server-side; nothing is
  * readable until membership is confirmed.
  */
+/** An invite link looks like `…/#/join/ABC123` — pull the code out if present. */
+function readInviteCode(): string {
+  const m = window.location.hash.match(/#\/join\/([A-Za-z0-9]+)/);
+  return m ? m[1].toUpperCase().slice(0, 6) : '';
+}
+
 export function GroupGate() {
   const [mode, setMode] = useState<'join' | 'create'>('join');
   const [name, setName] = useState('');
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(readInviteCode);
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
