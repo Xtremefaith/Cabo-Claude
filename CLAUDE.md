@@ -19,11 +19,23 @@ Key concepts:
 
 ## Git lifecycle (decided)
 
-- **Develop on a feature branch**, then **merge directly into `main`** and push.
-- **We do NOT use pull requests at this time.** Don't open a PR unless explicitly
-  asked.
-- After merging, `main` is what deploys; a feature branch's UI won't appear on
-  the deployed site / `main` until it's merged.
+> **We do NOT have a development / staging environment at this time.** There is
+> no pre-prod deploy, so merging to `main` is what ships to production, and
+> review happens on the live production deploy after the merge.
+
+Because of that, the current lifecycle is:
+
+- **Develop on a feature branch**, verify locally with `yarn build`, then
+  **merge directly into `main`** and push.
+- **Merging to `main` is a production release.** The hosting provider
+  (Netlify / Vercel — see `netlify.toml` / `vercel.json`) auto-deploys `main`,
+  so keep `main` deployable at all times.
+- **Review the change in production** after it merges — there's no other
+  environment to preview it on. A feature branch's UI won't appear on the
+  deployed site / `main` until it's merged.
+- **We do NOT use pull requests at this time.** Don't open a PR unless
+  explicitly asked.
+- Revisit this section once a dedicated dev/staging environment exists.
 
 ## Build & verify
 

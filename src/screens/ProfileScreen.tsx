@@ -110,13 +110,19 @@ export function ProfileScreen() {
                   className="glass flex items-center justify-between rounded-2xl px-4 py-3"
                 >
                   <span className="font-display font-extrabold">
-                    {r.gameId === 'hot-or-not' ? 'Hot or Not' : 'Most Likely To'}
+                    {r.gameId === 'hot-or-not'
+                      ? 'Hot or Not'
+                      : r.gameId === 'most-likely-to'
+                        ? 'Most Likely To'
+                        : 'Would You Rather'}
                   </span>
                   <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
                   <span className="font-display font-extrabold text-hot">
                     {r.gameId === 'hot-or-not'
                       ? `${r.data.choices.filter((c) => c.hot).length}/${r.data.choices.length} 🔥`
-                      : `${r.data.votes.length} votes 🏆`}
+                      : r.gameId === 'most-likely-to'
+                        ? `${r.data.votes.length} votes 🏆`
+                        : `${r.data.choices.length} picks 🤔`}
                   </span>
                 </div>
               ))}

@@ -15,6 +15,7 @@ export function HomeScreen() {
   const group = useGroup();
   const hasHotResults = results.some((r) => r.gameId === 'hot-or-not');
   const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
+  const hasWyrResults = results.some((r) => r.gameId === 'would-you-rather');
   const spice = group?.settings?.spice ?? DEFAULT_SPICE;
 
   return (
@@ -119,6 +120,14 @@ export function HomeScreen() {
                 className="font-display text-sm font-extrabold text-sun active:scale-95"
               >
                 🏆 Results
+              </button>
+            )}
+            {hasWyrResults && (
+              <button
+                onClick={() => navigate('/play/would-you-rather/results')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                📊 Splits
               </button>
             )}
             {hasHotResults && (
