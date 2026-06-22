@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BackButton, Button, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { PhotoPicker } from '../components/PhotoPicker';
 import { GameLogo } from '../components/GameLogo';
 import { getGame } from '../games/registry';
-import { usePlayers } from '../store/useStore';
-import { addPlayer } from '../store/storage';
+import { usePlayers, useMyPlayerId } from '../store/useStore';
+import { addPlayer, getPlayer } from '../store/storage';
 import { pickPlayerColor, uid } from '../lib/util';
 import type { Gender } from '../types';
 
@@ -15,10 +15,17 @@ export function PlayerPickScreen() {
   const { gameId = '' } = useParams();
   const navigate = useNavigate();
   const players = usePlayers();
+  const myPlayerId = useMyPlayerId();
   const game = getGame(gameId);
 
   // Jump straight to player creation the first time around.
   const [mode, setMode] = useState<'pick' | 'create'>(players.length ? 'pick' : 'create');
+
+  // Cloud mode: this device is already "logged in" as a player, so there's no
+  // need to ask who's playing — go straight to category selection for them.
+  if (myPlayerId && getPlayer(myPlayerId)) {
+    return <Navigate to={`/play/${gameId}/category/${myPlayerId}`} replace />;
+  }
 
   if (!game) {
     return (
