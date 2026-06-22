@@ -27,6 +27,7 @@ export default {
       fontFamily: {
         display: ['"Baloo 2"', 'system-ui', 'sans-serif'],
         body: ['Nunito', 'system-ui', 'sans-serif'],
+        script: ['Pacifico', 'cursive'],
       },
       boxShadow: {
         card: '0 18px 50px -12px rgba(0,0,0,0.7)',

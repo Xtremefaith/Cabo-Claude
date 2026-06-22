@@ -2,12 +2,20 @@
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#ff3d77" />
-      <stop offset="1" stop-color="#ffb347" />
+      <stop offset="1" stop-color="#39c0d6" />
     </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="14" fill="#0c0a1f" />
-  <path
-    d="M32 50C20 42 12 35 12 26.5 12 20 17 16 22.5 16c3.6 0 6.9 1.9 8.5 4.8C32.6 17.9 35.9 16 39.5 16 45 16 50 20 50 26.5 50 35 42 42 32 50z"
+  <rect width="64" height="64" rx="16" fill="#0c0a1f" />
+  <circle cx="32" cy="32" r="22" fill="none" stroke="url(#g)" stroke-width="3" />
+  <text
+    x="32"
+    y="41"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="24"
+    font-weight="bold"
     fill="url(#g)"
-  />
+  >
+    CC
+  </text>
 </svg>

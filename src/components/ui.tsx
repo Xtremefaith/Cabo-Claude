@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 
 export function Screen({ children }: { children: ReactNode }) {
   return (
@@ -66,24 +66,53 @@ export function BackButton({ onClick }: { onClick: () => void }) {
   );
 }
 
+// Drop the official logo art at `public/logo.png` and it replaces the wordmark
+// automatically. Until then (or if it fails to load) the neon wordmark below
+// stands in. Module-scoped flag avoids retrying a missing file every render.
+const LOGO_SRC = './logo.png';
+let rasterUnavailable = false;
+
 export function Logo({ small = false }: { small?: boolean }) {
+  const [useWordmark, setUseWordmark] = useState(rasterUnavailable);
+
+  if (!useWordmark) {
+    return (
+      <div className="text-center">
+        <img
+          src={LOGO_SRC}
+          alt="Claude Cabo"
+          draggable={false}
+          onError={() => {
+            rasterUnavailable = true;
+            setUseWordmark(true);
+          }}
+          className={`mx-auto w-auto ${small ? 'h-12' : 'h-56 max-w-full'}`}
+        />
+      </div>
+    );
+  }
+
+  return <Wordmark small={small} />;
+}
+
+function Wordmark({ small }: { small: boolean }) {
+  if (small) {
+    return (
+      <span className="font-script text-2xl leading-none">
+        <span className="neon-pink">Claude</span>{' '}
+        <span className="neon-teal font-display font-extrabold uppercase">Cabo</span>
+      </span>
+    );
+  }
   return (
     <div className="text-center">
-      <h1
-        className={`font-display font-extrabold leading-none tracking-tight ${
-          small ? 'text-2xl' : 'text-5xl'
-        }`}
-      >
-        <span className="text-white">Claude</span>{' '}
-        <span className="bg-gradient-to-r from-hot via-sun to-not bg-clip-text text-transparent">
-          Cabo
-        </span>
-      </h1>
-      {!small && (
-        <p className="mt-2 font-body text-sm font-bold uppercase tracking-[0.3em] text-white/50">
-          Club
-        </p>
-      )}
+      <div className="font-script text-6xl leading-none neon-pink">Claude</div>
+      <div className="-mt-1 font-display text-6xl font-extrabold uppercase tracking-wide neon-teal">
+        Cabo
+      </div>
+      <p className="mt-3 font-body text-xs font-bold uppercase tracking-[0.35em] text-sun/80">
+        Arcade of Social Games
+      </p>
     </div>
   );
 }
