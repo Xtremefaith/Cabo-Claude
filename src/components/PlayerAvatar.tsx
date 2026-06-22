@@ -8,6 +8,21 @@ export function PlayerAvatar({
   player: Player;
   size?: number;
 }) {
+  if (player.photo) {
+    return (
+      <img
+        src={player.photo}
+        alt={player.name}
+        draggable={false}
+        className="shrink-0 rounded-full object-cover"
+        style={{
+          width: size,
+          height: size,
+          boxShadow: `0 0 18px -4px ${player.color}`,
+        }}
+      />
+    );
+  }
   return (
     <div
       className="flex shrink-0 items-center justify-center rounded-full font-display font-extrabold text-night-900"

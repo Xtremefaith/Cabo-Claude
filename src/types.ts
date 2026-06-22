@@ -11,6 +11,8 @@ export interface Player {
   gender: Gender;
   /** A fun avatar accent color, assigned on creation. */
   color: string;
+  /** Optional self-photo as a downscaled data URL (used for the avatar). */
+  photo?: string;
   createdAt: number;
 }
 

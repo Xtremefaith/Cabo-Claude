@@ -39,3 +39,37 @@ export function formatDate(ts: number): string {
     minute: '2-digit',
   });
 }
+
+/**
+ * Read an image File, center-crop it to a square, downscale to `size`px, and
+ * return a JPEG data URL. Keeps player photos tiny (~10–25KB) so they fit
+ * comfortably in localStorage alongside the rest of the store.
+ */
+export async function fileToSquareDataUrl(file: File, size = 256): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(fr.result as string);
+    fr.onerror = () => reject(fr.error ?? new Error('read failed'));
+    fr.readAsDataURL(file);
+  });
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = () => reject(new Error('image decode failed'));
+    i.src = dataUrl;
+  });
+
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return dataUrl; // extremely unlikely; fall back to the original
+
+  // Center-crop to a square so portraits/landscapes both fill the circle.
+  const side = Math.min(img.width, img.height);
+  const sx = (img.width - side) / 2;
+  const sy = (img.height - side) / 2;
+  ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+  return canvas.toDataURL('image/jpeg', 0.82);
+}

@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { BackButton, Button, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { Headshot } from '../components/Headshot';
-import { deletePlayer, getPlayer, getResultsForPlayer } from '../store/storage';
+import { PhotoPicker } from '../components/PhotoPicker';
+import { deletePlayer, getPlayer, getResultsForPlayer, updatePlayer } from '../store/storage';
 import { useResults } from '../store/useStore';
 import { hotOrNotStats } from '../games/hotOrNot/stats';
 import { CELEBRITIES } from '../data/celebrities';
@@ -65,7 +66,9 @@ export function ProfileScreen() {
       <BackButton onClick={() => navigate('/')} />
 
       <div className="flex flex-col items-center pt-2 text-center">
-        <PlayerAvatar player={player} size={88} />
+        <PhotoPicker onPhoto={(photo) => updatePlayer(player.id, { photo })} label="Change photo">
+          <PlayerAvatar player={player} size={88} />
+        </PhotoPicker>
         <h1 className="mt-3 font-display text-3xl font-extrabold">{player.name}</h1>
         <p className="font-body text-sm font-bold capitalize text-white/40">{player.gender}</p>
       </div>
