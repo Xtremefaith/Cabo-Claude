@@ -4,7 +4,9 @@
 
 A collection of social party games for dinner-table chaos. First game up: **Hot or Not** 🔥
 
-> **Logo:** drop the logo art at [`public/logo.png`](public/) and it shows automatically on the home screen. Until then a neon wordmark stands in.
+> **Artwork:** the app reads logo art from `public/` and shows it automatically (a neon wordmark / gradient tile stands in until each file lands):
+> - App logo → `public/logo.png` (home screen)
+> - Hot or Not logo → `public/games/hot-or-not.png` (game tile + "who's playing?" header)
 
 ## Hot or Not
 

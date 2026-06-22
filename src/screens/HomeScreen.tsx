@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Logo, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
+import { GameTile } from '../components/GameTile';
 import { GAMES } from '../games/registry';
 import { usePlayers, useResults } from '../store/useStore';
 
@@ -28,20 +29,7 @@ export function HomeScreen() {
         </p>
         <div className="flex flex-col gap-3">
           {GAMES.map((g) => (
-            <button
-              key={g.id}
-              disabled={!g.available}
-              onClick={() => navigate(`/play/${g.id}`)}
-              className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${g.gradient} p-5 text-left shadow-card transition active:scale-[0.98] disabled:opacity-40`}
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-4xl">{g.emoji}</span>
-                <div>
-                  <h3 className="font-display text-2xl font-extrabold text-night-900">{g.title}</h3>
-                  <p className="font-body text-sm font-bold text-night-900/70">{g.tagline}</p>
-                </div>
-              </div>
-            </button>
+            <GameTile key={g.id} game={g} onClick={() => navigate(`/play/${g.id}`)} />
           ))}
           <div className="rounded-3xl border border-dashed border-white/15 p-4 text-center font-body text-sm font-bold text-white/35">
             More games coming this week…

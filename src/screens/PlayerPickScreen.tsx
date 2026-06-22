@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BackButton, Button, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
+import { GameLogo } from '../components/GameLogo';
 import { getGame } from '../games/registry';
 import { usePlayers } from '../store/useStore';
 import { addPlayer } from '../store/storage';
@@ -53,10 +54,16 @@ export function PlayerPickScreen() {
   return (
     <Screen>
       <BackButton onClick={() => navigate('/')} />
-      <div className="mb-6">
-        <p className="font-body text-sm font-bold uppercase tracking-widest text-white/50">
-          {game.emoji} {game.title}
-        </p>
+      <div className="mb-6 text-center">
+        <GameLogo
+          game={game}
+          className="mx-auto mb-2 h-28 w-auto object-contain"
+          fallback={
+            <p className="font-body text-sm font-bold uppercase tracking-widest text-white/50">
+              {game.emoji} {game.title}
+            </p>
+          }
+        />
         <h1 className="font-display text-3xl font-extrabold">Who's playing?</h1>
       </div>
 
