@@ -25,11 +25,17 @@ interface DB {
 }
 const empty: DB = { players: [], results: [] };
 
+export interface GroupSettings {
+  /** Max prompt spice level (1–5) for games like Most Likely To. */
+  spice?: number;
+}
+
 export interface GroupInfo {
   id: string;
   code: string;
   name: string;
   photo?: string;
+  settings?: GroupSettings;
 }
 
 const cloud = supabaseConfigured;
@@ -215,8 +221,8 @@ export async function joinGroup(code: string, password: string): Promise<GroupIn
   return g;
 }
 
-/** Update the current group's name and/or photo (synced to all members). */
-export async function updateGroup(patch: { name?: string; photo?: string }) {
+/** Update the current group's name, photo, and/or settings (synced to all). */
+export async function updateGroup(patch: { name?: string; photo?: string; settings?: GroupSettings }) {
   if (!group) return;
   // Optimistic local update for a snappy UI.
   group = { ...group, ...patch };
@@ -227,7 +233,7 @@ export async function updateGroup(patch: { name?: string; photo?: string }) {
     p_group_id: group.id,
     p_name: patch.name ?? null,
     p_photo: patch.photo ?? null,
-    p_settings: null,
+    p_settings: patch.settings ?? null,
   });
   if (error) {
     logError({ error });
@@ -321,8 +327,15 @@ function rowToGroup(data: unknown): GroupInfo {
     code: string;
     name: string;
     photo?: string | null;
+    settings?: GroupSettings | null;
   };
-  return { id: r.id, code: r.code, name: r.name, photo: r.photo ?? undefined };
+  return {
+    id: r.id,
+    code: r.code,
+    name: r.name,
+    photo: r.photo ?? undefined,
+    settings: r.settings ?? {},
+  };
 }
 
 function rowToPlayer(r: any): Player {

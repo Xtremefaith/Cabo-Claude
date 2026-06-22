@@ -4,6 +4,7 @@ import { BackButton, Button, Screen } from '../components/ui';
 import { PhotoPicker } from '../components/PhotoPicker';
 import { useGroup } from '../store/useStore';
 import { leaveGroup, updateGroup } from '../store/storage';
+import { DEFAULT_SPICE, SPICE_LABELS } from '../data/spice';
 
 export function ManageGroupScreen() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ export function ManageGroupScreen() {
   }
 
   const inviteLink = `${window.location.origin}${window.location.pathname}#/join/${group.code}`;
+  const spice = group.settings?.spice ?? DEFAULT_SPICE;
 
   const share = async () => {
     const text = `Join my Claude Cabo group "${group.name}" 🌴 — group code ${group.code}`;
@@ -117,10 +119,30 @@ export function ManageGroupScreen() {
         </p>
       </div>
 
-      {/* Future settings */}
-      <div className="mt-4 rounded-2xl border border-dashed border-white/10 px-4 py-3">
-        <p className="font-body text-xs font-bold text-white/35">
-          ⚙️ More group settings coming soon — like a 🌶️ spice level for the prompts.
+      {/* Spice level */}
+      <div className="mt-4 rounded-2xl glass p-4">
+        <p className="font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
+          Spice level
+        </p>
+        <div className="mt-2 flex items-center gap-1.5">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              onClick={() => updateGroup({ settings: { ...(group.settings ?? {}), spice: n } })}
+              aria-label={`Set spice ${n}`}
+              className={`text-3xl transition active:scale-90 ${
+                n <= spice ? '' : 'opacity-20 grayscale'
+              }`}
+            >
+              🌶️
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 font-display text-sm font-extrabold">
+          {spice} / 5 · <span className="text-hot">{SPICE_LABELS[spice]}</span>
+        </p>
+        <p className="mt-1 font-body text-xs font-bold text-white/35">
+          Controls how wild the Most Likely To prompts get for the whole group.
         </p>
       </div>
 

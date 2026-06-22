@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button, Screen } from '../../components/ui';
 import { PlayerAvatar } from '../../components/PlayerAvatar';
-import { usePlayers, useMyPlayerId } from '../../store/useStore';
+import { usePlayers, useMyPlayerId, useGroup } from '../../store/useStore';
 import { addResult, getPlayer } from '../../store/storage';
 import { MOST_LIKELY_PROMPTS, type MostLikelyPrompt } from '../../data/mostLikelyPrompts';
+import { DEFAULT_SPICE } from '../../data/spice';
 import { sample, uid } from '../../lib/util';
 import type { MostLikelyVote } from '../../types';
 
@@ -15,12 +16,15 @@ export function MostLikelyScreen() {
   const navigate = useNavigate();
   const members = usePlayers();
   const myPlayerId = useMyPlayerId();
+  const group = useGroup();
   const me = getPlayer(myPlayerId ?? '');
 
-  // One deck per game, built once.
-  const [deck] = useState<MostLikelyPrompt[]>(() =>
-    sample(MOST_LIKELY_PROMPTS, Math.min(DECK_SIZE, MOST_LIKELY_PROMPTS.length)),
-  );
+  // One deck per game, built once — only prompts at or below the group's spice.
+  const [deck] = useState<MostLikelyPrompt[]>(() => {
+    const maxSpice = group?.settings?.spice ?? DEFAULT_SPICE;
+    const pool = MOST_LIKELY_PROMPTS.filter((p) => p.spice <= maxSpice);
+    return sample(pool, Math.min(DECK_SIZE, pool.length));
+  });
   const [index, setIndex] = useState(0);
   const [votes, setVotes] = useState<MostLikelyVote[]>([]);
 
