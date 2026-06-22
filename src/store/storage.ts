@@ -17,6 +17,7 @@ import { ensureAnonSession, supabase, supabaseConfigured } from '../lib/supabase
 
 const LOCAL_KEY = 'claude-cabo:v1'; // local-mode DB
 const GROUP_KEY = 'claude-cabo:group'; // remembered group (cloud mode)
+const ME_PREFIX = 'claude-cabo:me:'; // this device's player, per group
 
 interface DB {
   players: Player[];
@@ -35,6 +36,7 @@ const cloud = supabaseConfigured;
 // ---------------------------------------------------------------- state ---
 let cache: DB = { ...empty };
 let group: GroupInfo | null = null;
+let myPlayerId: string | null = null; // which player is "me" on this device
 let ready = !cloud; // local mode is ready immediately; cloud waits for init
 let channel: RealtimeChannel | null = null;
 
@@ -81,6 +83,17 @@ export function getResultsForPlayer(playerId: string): GameResult[] {
 
 export function getGroup(): GroupInfo | null {
   return group;
+}
+
+export function getMyPlayerId(): string | null {
+  return myPlayerId;
+}
+
+/** Mark a player as "me" on this device for the current group. */
+export function setMyPlayer(id: string) {
+  myPlayerId = id;
+  if (group) localStorage.setItem(ME_PREFIX + group.id, id);
+  notify();
 }
 
 export function isReady(): boolean {
@@ -207,6 +220,7 @@ export function leaveGroup() {
   channel?.unsubscribe();
   channel = null;
   group = null;
+  myPlayerId = null;
   cache = { ...empty };
   notify();
 }
@@ -233,6 +247,7 @@ export async function initStore(): Promise<void> {
 
 async function enterGroup(g: GroupInfo) {
   group = g;
+  myPlayerId = localStorage.getItem(ME_PREFIX + g.id);
   localStorage.setItem(GROUP_KEY, JSON.stringify(g));
   await hydrate();
   subscribeRealtime();

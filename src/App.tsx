@@ -5,16 +5,18 @@ import { CategoryPickScreen } from './screens/CategoryPickScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { RevealScreen } from './screens/RevealScreen';
 import { GroupGate } from './screens/GroupGate';
+import { PlayerSetupScreen } from './screens/PlayerSetupScreen';
 import { HotOrNotScreen } from './games/hotOrNot/HotOrNotScreen';
 import { Screen } from './components/ui';
 import { isCloud } from './store/storage';
-import { useGroup, useReady } from './store/useStore';
+import { useGroup, useMyPlayerId, useReady } from './store/useStore';
 
 export default function App() {
   const ready = useReady();
   const group = useGroup();
+  const myPlayerId = useMyPlayerId();
 
-  // Cloud mode: wait for startup, then require a group before the arcade.
+  // Cloud mode: wait for startup → require a group → set up your own player.
   if (isCloud() && !ready) {
     return (
       <Screen>
@@ -26,6 +28,9 @@ export default function App() {
   }
   if (isCloud() && !group) {
     return <GroupGate />;
+  }
+  if (isCloud() && group && !myPlayerId) {
+    return <PlayerSetupScreen />;
   }
 
   return (
