@@ -52,3 +52,16 @@ export function buildMostLikelyReveal(results: GameResult[]): MostLikelyRow[] {
   rows.sort((a, b) => b.topCount - a.topCount || b.totalVotes - a.totalVotes);
   return rows;
 }
+
+/** This voter's latest pick per prompt: promptId -> targetPlayerId. */
+export function myMostLikelyVotes(results: GameResult[], myPlayerId: string): Map<string, string> {
+  const mine = results
+    .filter(
+      (r): r is Extract<GameResult, { gameId: 'most-likely-to' }> =>
+        r.gameId === 'most-likely-to' && r.playerId === myPlayerId,
+    )
+    .sort((a, b) => a.playedAt - b.playedAt); // older first so newer overwrites
+  const map = new Map<string, string>();
+  for (const g of mine) for (const v of g.data.votes) map.set(v.promptId, v.targetPlayerId);
+  return map;
+}

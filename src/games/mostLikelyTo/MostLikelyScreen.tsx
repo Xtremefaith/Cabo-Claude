@@ -4,9 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button, Screen } from '../../components/ui';
 import { PlayerAvatar } from '../../components/PlayerAvatar';
 import { usePlayers, useMyPlayerId, useGroup } from '../../store/useStore';
-import { addResult, getPlayer } from '../../store/storage';
+import { addResult, getPlayer, getResults } from '../../store/storage';
 import { MOST_LIKELY_PROMPTS, type MostLikelyPrompt } from '../../data/mostLikelyPrompts';
 import { DEFAULT_SPICE } from '../../data/spice';
+import { myMostLikelyVotes } from './stats';
 import { sample, uid } from '../../lib/util';
 import type { MostLikelyVote } from '../../types';
 
@@ -19,10 +20,12 @@ export function MostLikelyScreen() {
   const group = useGroup();
   const me = getPlayer(myPlayerId ?? '');
 
-  // One deck per game, built once — only prompts at or below the group's spice.
+  // One deck per game, built once: prompts at or below the group's spice that
+  // this player hasn't answered yet (so replays go deeper, never repeat).
   const [deck] = useState<MostLikelyPrompt[]>(() => {
     const maxSpice = group?.settings?.spice ?? DEFAULT_SPICE;
-    const pool = MOST_LIKELY_PROMPTS.filter((p) => p.spice <= maxSpice);
+    const answered = myMostLikelyVotes(getResults(), myPlayerId ?? '');
+    const pool = MOST_LIKELY_PROMPTS.filter((p) => p.spice <= maxSpice && !answered.has(p.id));
     return sample(pool, Math.min(DECK_SIZE, pool.length));
   });
   const [index, setIndex] = useState(0);
@@ -42,6 +45,16 @@ export function MostLikelyScreen() {
       <Fallback
         title="Need more players"
         body="Add at least one more person to the group, then the votes get fun."
+        onHome={() => navigate('/')}
+      />
+    );
+  }
+  if (deck.length === 0) {
+    return (
+      <DoneScreen
+        title="All caught up!"
+        body="You've voted on every prompt at this spice level. Check the results, or raise the spice in Manage Group for more."
+        onResults={() => navigate('/play/most-likely-to/results')}
         onHome={() => navigate('/')}
       />
     );
@@ -132,15 +145,23 @@ export function MostLikelyScreen() {
   );
 }
 
-function DoneScreen({ onResults, onHome }: { onResults: () => void; onHome: () => void }) {
+function DoneScreen({
+  onResults,
+  onHome,
+  title = 'Votes in!',
+  body = 'See how the whole group voted — the results update as more people play.',
+}: {
+  onResults: () => void;
+  onHome: () => void;
+  title?: string;
+  body?: string;
+}) {
   return (
     <Screen>
       <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
         <div className="text-6xl">🗳️</div>
-        <h1 className="font-display text-4xl font-extrabold">Votes in!</h1>
-        <p className="font-body text-white/55">
-          See how the whole group voted — the results update as more people play.
-        </p>
+        <h1 className="font-display text-4xl font-extrabold">{title}</h1>
+        <p className="font-body text-white/55">{body}</p>
         <div className="mt-2 flex w-full max-w-xs flex-col gap-3">
           <Button onClick={onResults}>See group results 🏆</Button>
           <Button variant="ghost" onClick={onHome}>
