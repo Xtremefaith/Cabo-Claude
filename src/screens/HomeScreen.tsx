@@ -6,6 +6,7 @@ import { GameTile, LockedTile } from '../components/GameTile';
 import { HomeBackground } from '../components/HomeBackground';
 import { COMING_SOON, GAMES } from '../games/registry';
 import { usePlayers, useResults, useGroup } from '../store/useStore';
+import { DEFAULT_SPICE, SPICE_LABELS } from '../data/spice';
 
 export function HomeScreen() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export function HomeScreen() {
   const hasHotResults = results.some((r) => r.gameId === 'hot-or-not');
   const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
   const hasWyrResults = results.some((r) => r.gameId === 'would-you-rather');
+  const spice = group?.settings?.spice ?? DEFAULT_SPICE;
 
   return (
     <Screen backdrop={<HomeBackground />}>
@@ -49,6 +51,28 @@ export function HomeScreen() {
             </div>
             <span className="font-display text-xs font-extrabold uppercase tracking-widest text-white/50">
               Manage ›
+            </span>
+          </button>
+        )}
+
+        {/* Spice meter — group-wide setting, visible to everyone playing */}
+        {group && (
+          <button
+            onClick={() => navigate('/manage')}
+            className="glass mt-2 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-left active:scale-[0.99]"
+          >
+            <span className="font-display text-xs font-extrabold uppercase tracking-widest text-white/50">
+              Spice
+            </span>
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span key={n} className={`text-lg ${n <= spice ? '' : 'opacity-20 grayscale'}`}>
+                  🌶️
+                </span>
+              ))}
+            </div>
+            <span className="ml-auto truncate font-display text-sm font-extrabold text-hot">
+              {SPICE_LABELS[spice]}
             </span>
           </button>
         )}

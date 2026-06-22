@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { BackButton, Button, Screen } from '../components/ui';
 import { PhotoPicker } from '../components/PhotoPicker';
 import { useGroup } from '../store/useStore';
-import { leaveGroup, updateGroup } from '../store/storage';
+import { leaveGroup, setGroupPassword, updateGroup } from '../store/storage';
 import { DEFAULT_SPICE, SPICE_LABELS } from '../data/spice';
 
 export function ManageGroupScreen() {
@@ -11,6 +12,11 @@ export function ManageGroupScreen() {
   const group = useGroup();
   const [name, setName] = useState(group?.name ?? '');
   const [copied, setCopied] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [pwBusy, setPwBusy] = useState(false);
+  const [pwStatus, setPwStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [showQr, setShowQr] = useState(false);
 
   if (!group) {
     return (
@@ -51,6 +57,24 @@ export function ManageGroupScreen() {
   };
 
   const nameDirty = name.trim().length > 0 && name.trim() !== group.name;
+  const canSavePassword = newPassword.trim().length >= 4 && !pwBusy;
+
+  const savePassword = async () => {
+    setPwError(null);
+    setPwStatus('idle');
+    setPwBusy(true);
+    try {
+      await setGroupPassword(newPassword.trim());
+      setNewPassword('');
+      setPwStatus('saved');
+      setTimeout(() => setPwStatus('idle'), 2200);
+    } catch (e) {
+      setPwStatus('error');
+      setPwError(e instanceof Error ? e.message : 'Could not update password.');
+    } finally {
+      setPwBusy(false);
+    }
+  };
 
   return (
     <Screen>
@@ -113,9 +137,65 @@ export function ManageGroupScreen() {
             {copied ? 'Copied!' : 'Copy link'}
           </Button>
         </div>
+
+        <button
+          onClick={() => setShowQr((v) => !v)}
+          className="mt-3 w-full rounded-2xl border border-white/10 bg-white/5 py-3 font-display text-sm font-extrabold uppercase tracking-widest text-white/70 transition active:scale-[0.98]"
+        >
+          {showQr ? 'Hide QR code' : 'Show QR code 📷'}
+        </button>
+
+        {showQr && (
+          <div className="mt-3 flex flex-col items-center gap-3">
+            <div className="rounded-2xl bg-white p-4 shadow-card">
+              <QRCodeSVG
+                value={inviteLink}
+                size={224}
+                level="M"
+                marginSize={0}
+                aria-label="Scan to join the group"
+              />
+            </div>
+            <p className="text-center font-body text-xs font-bold text-white/45">
+              Hold this up — everyone scans with their camera to jump straight to the join screen
+              with the code filled in.
+            </p>
+          </div>
+        )}
+
         <p className="mt-3 font-body text-xs font-bold text-white/35">
           The link fills in the code automatically. Tell them the password yourself — it's never in
           the link.
+        </p>
+      </div>
+
+      {/* Change password */}
+      <div className="mt-4 rounded-2xl glass p-4">
+        <p className="font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
+          Change password
+        </p>
+        <div className="mt-2 flex gap-2">
+          <input
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            type="password"
+            maxLength={64}
+            placeholder="New shared password"
+            className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 font-display text-xl font-extrabold text-white placeholder:text-white/25 focus:border-hot focus:outline-none"
+          />
+          <Button disabled={!canSavePassword} onClick={savePassword}>
+            {pwBusy ? '…' : 'Update'}
+          </Button>
+        </div>
+        {pwStatus === 'saved' && (
+          <p className="mt-2 font-body text-xs font-bold text-hot">Password updated ✓</p>
+        )}
+        {pwStatus === 'error' && pwError && (
+          <p className="mt-2 font-body text-xs font-bold text-not-glow">{pwError}</p>
+        )}
+        <p className="mt-2 font-body text-xs font-bold text-white/35">
+          Everyone already in the group stays in — the new password only applies to new invites.
+          Share it yourself; it's never in the link.
         </p>
       </div>
 
