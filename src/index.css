@@ -62,4 +62,80 @@
       0 0 16px rgba(57, 192, 214, 0.7),
       0 0 30px rgba(57, 192, 214, 0.5);
   }
+
+  /* ---- Arcade / synthwave-sunset home background ---- */
+  .cabo-sunset {
+    background: linear-gradient(
+      180deg,
+      #0a0820 0%,
+      #170f38 30%,
+      #3d1a5b 52%,
+      #8a2a6b 70%,
+      #ff5e6c 86%,
+      #ffb347 100%
+    );
+  }
+
+  .cabo-sun {
+    width: 230px;
+    height: 230px;
+    border-radius: 9999px;
+    background: linear-gradient(180deg, #ffe27a 0%, #ff8a5b 48%, #ff3d77 100%);
+    box-shadow:
+      0 0 70px 12px rgba(255, 94, 108, 0.55),
+      0 0 140px 40px rgba(255, 61, 119, 0.25);
+  }
+
+  /* Retro horizontal slats across the lower half of the sun. */
+  .cabo-sun-slats {
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 26px,
+      rgba(10, 8, 32, 0.85) 26px 30px,
+      transparent 30px 40px,
+      rgba(10, 8, 32, 0.85) 40px 44px,
+      transparent 44px 60px,
+      rgba(10, 8, 32, 0.85) 60px 65px
+    );
+  }
+
+  .cabo-grid {
+    position: absolute;
+    left: -30%;
+    right: -30%;
+    bottom: 0;
+    height: 44%;
+    background-image:
+      linear-gradient(rgba(57, 192, 214, 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 61, 119, 0.45) 1px, transparent 1px);
+    background-size: 46px 46px;
+    transform: perspective(330px) rotateX(63deg);
+    transform-origin: bottom center;
+    -webkit-mask-image: linear-gradient(to top, #000 22%, transparent 92%);
+    mask-image: linear-gradient(to top, #000 22%, transparent 92%);
+    animation: cabo-grid 7s linear infinite;
+  }
+}
+
+@keyframes cabo-grid {
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      0 46px,
+      0 0;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
 }

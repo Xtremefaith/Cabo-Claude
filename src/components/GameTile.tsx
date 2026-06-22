@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { GameMeta } from '../games/registry';
+import type { ComingSoonGame, GameMeta } from '../games/registry';
 
 const missingCache: Record<string, boolean> = {};
 
@@ -42,5 +42,30 @@ export function GameTile({ game, onClick }: { game: GameMeta; onClick: () => voi
         </div>
       )}
     </button>
+  );
+}
+
+/** A locked "coming soon" arcade slot — dimmed, padlocked, not playable. */
+export function LockedTile({ game }: { game: ComingSoonGame }) {
+  return (
+    <div
+      aria-disabled
+      className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-night-800/60 p-4"
+    >
+      <div className="absolute right-2.5 top-2.5 rounded-full bg-black/40 px-2 py-0.5 font-body text-[9px] font-extrabold uppercase tracking-widest text-white/50">
+        Soon
+      </div>
+      <div className="text-3xl opacity-70 grayscale">{game.emoji}</div>
+      <div className="mt-3">
+        <h3 className="font-display text-base font-extrabold leading-tight text-white/75">
+          {game.title}
+        </h3>
+        <p className="font-body text-xs font-bold text-white/35">{game.tagline}</p>
+      </div>
+      {/* lock overlay */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <span className="text-2xl opacity-25">🔒</span>
+      </div>
+    </div>
   );
 }

@@ -1,10 +1,18 @@
 import { type ReactNode, useState } from 'react';
 
-export function Screen({ children }: { children: ReactNode }) {
+export function Screen({
+  children,
+  backdrop,
+}: {
+  children: ReactNode;
+  /** Optional custom background layer; replaces the default ambient glow. */
+  backdrop?: ReactNode;
+}) {
   return (
-    <div className="cabo-bg no-select min-h-full w-full">
+    <div className={`no-select relative min-h-screen w-full ${backdrop ? '' : 'cabo-bg'}`}>
+      {backdrop}
       <div
-        className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5"
+        className="relative mx-auto flex min-h-screen w-full max-w-md flex-col px-5"
         style={{
           paddingTop: 'max(env(safe-area-inset-top), 1rem)',
           paddingBottom: 'max(env(safe-area-inset-bottom), 1rem)',

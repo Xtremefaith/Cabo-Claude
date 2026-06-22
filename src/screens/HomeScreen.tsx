@@ -2,8 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Logo, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
-import { GameTile } from '../components/GameTile';
-import { GAMES } from '../games/registry';
+import { GameTile, LockedTile } from '../components/GameTile';
+import { HomeBackground } from '../components/HomeBackground';
+import { COMING_SOON, GAMES } from '../games/registry';
 import { usePlayers, useResults } from '../store/useStore';
 
 export function HomeScreen() {
@@ -13,33 +14,47 @@ export function HomeScreen() {
   const hasResults = results.length > 0;
 
   return (
-    <Screen>
+    <Screen backdrop={<HomeBackground />}>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-1 flex-col"
       >
-        <div className="pt-8">
+        {/* Hero logo */}
+        <motion.div
+          className="flex justify-center pt-6"
+          style={{ filter: 'drop-shadow(0 6px 26px rgba(255,61,119,0.45))' }}
+          animate={{ y: [0, -7, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        >
           <Logo />
-        </div>
+        </motion.div>
 
         {/* Games */}
-        <p className="mb-3 mt-9 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
-          Games
+        <p className="mb-3 mt-6 font-display text-sm font-extrabold uppercase tracking-widest text-white/60">
+          🕹️ Arcade
         </p>
+
         <div className="flex flex-col gap-3">
           {GAMES.map((g) => (
             <GameTile key={g.id} game={g} onClick={() => navigate(`/play/${g.id}`)} />
           ))}
-          <div className="rounded-3xl border border-dashed border-white/15 p-4 text-center font-body text-sm font-bold text-white/35">
-            More games coming this week…
-          </div>
+        </div>
+
+        {/* Locked / coming soon */}
+        <p className="mb-2 mt-5 font-display text-xs font-extrabold uppercase tracking-widest text-white/40">
+          Unlocking soon
+        </p>
+        <div className="grid auto-rows-fr grid-cols-2 gap-3">
+          {COMING_SOON.map((g) => (
+            <LockedTile key={g.title} game={g} />
+          ))}
         </div>
 
         {/* Players */}
-        <div className="mb-3 mt-9 flex items-center justify-between">
-          <p className="font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
-            Players
+        <div className="mb-3 mt-8 flex items-center justify-between">
+          <p className="font-display text-sm font-extrabold uppercase tracking-widest text-white/60">
+            👥 Players
           </p>
           {hasResults && (
             <button
@@ -52,8 +67,8 @@ export function HomeScreen() {
         </div>
 
         {players.length === 0 ? (
-          <p className="rounded-2xl glass px-4 py-6 text-center font-body text-white/50">
-            No players yet. Start a game to add one!
+          <p className="glass rounded-2xl px-4 py-6 text-center font-body text-white/60">
+            No players yet — tap a game to add one!
           </p>
         ) : (
           <div className="flex flex-col gap-2 pb-4">

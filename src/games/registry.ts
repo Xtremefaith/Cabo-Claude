@@ -33,3 +33,17 @@ export const GAMES: GameMeta[] = [
 export function getGame(id: string): GameMeta | undefined {
   return GAMES.find((g) => g.id === id);
 }
+
+/** Teaser tiles for games that aren't built yet — shown locked on the home screen. */
+export interface ComingSoonGame {
+  title: string;
+  tagline: string;
+  emoji: string;
+}
+
+export const COMING_SOON: ComingSoonGame[] = [
+  { title: 'Most Likely To', tagline: 'Vote who fits the bill', emoji: '🏆' },
+  { title: 'Hot Takes', tagline: 'Defend your spiciest opinion', emoji: '🌶️' },
+  { title: 'Would You Rather', tagline: 'Pick your poison', emoji: '🤔' },
+  { title: 'Guess Who Said It', tagline: 'Match the quote to the player', emoji: '💬' },
+];
