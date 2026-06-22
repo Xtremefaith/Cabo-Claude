@@ -244,6 +244,20 @@ export async function updateGroup(patch: { name?: string; photo?: string; settin
   notify();
 }
 
+/**
+ * Rotate the current group's shared password. Only affects *new* joins —
+ * devices already in the group stay in (access is by membership, not password).
+ */
+export async function setGroupPassword(password: string): Promise<void> {
+  if (!group) throw new Error('No group.');
+  if (!supabase) throw new Error('Cloud play is not configured.');
+  const { error } = await supabase.rpc('set_group_password', {
+    p_group_id: group.id,
+    p_new_password: password,
+  });
+  if (error) throw new Error(error.message);
+}
+
 /** Forget the group on this device (membership in the DB is kept). */
 export function leaveGroup() {
   localStorage.removeItem(GROUP_KEY);
