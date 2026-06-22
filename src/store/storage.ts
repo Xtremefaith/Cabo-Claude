@@ -28,8 +28,17 @@ function read(): DB {
 
 const listeners = new Set<() => void>();
 
+// Cached snapshots for useSyncExternalStore. Its getSnapshot must return a
+// STABLE reference between calls or React loops forever ("Maximum update depth
+// exceeded") — and read() JSON-parses a fresh array every call. So we compute
+// the snapshot once and reuse it until the next write() invalidates the cache.
+let playersSnapshot: Player[] | null = null;
+let resultsSnapshot: GameResult[] | null = null;
+
 function write(db: DB) {
   localStorage.setItem(KEY, JSON.stringify(db));
+  playersSnapshot = null;
+  resultsSnapshot = null;
   listeners.forEach((fn) => fn());
 }
 
@@ -39,7 +48,10 @@ export function subscribe(fn: () => void): () => void {
 }
 
 export function getPlayers(): Player[] {
-  return read().players.sort((a, b) => a.createdAt - b.createdAt);
+  if (playersSnapshot === null) {
+    playersSnapshot = read().players.sort((a, b) => a.createdAt - b.createdAt);
+  }
+  return playersSnapshot;
 }
 
 export function getPlayer(id: string): Player | undefined {
@@ -66,7 +78,10 @@ export function deletePlayer(id: string) {
 }
 
 export function getResults(): GameResult[] {
-  return read().results;
+  if (resultsSnapshot === null) {
+    resultsSnapshot = read().results;
+  }
+  return resultsSnapshot;
 }
 
 export function getResultsForPlayer(playerId: string): GameResult[] {
