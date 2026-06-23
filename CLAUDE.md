@@ -37,6 +37,25 @@ Because of that, the current lifecycle is:
   explicitly asked.
 - Revisit this section once a dedicated dev/staging environment exists.
 
+## Thread lifecycle (`#done`)
+
+Threads (sessions) are ephemeral — the container is reclaimed after the session
+ends, so anything worth keeping must already be committed and pushed.
+
+- **`#done` means: close this thread.** Before treating a thread as closed,
+  verify there's nothing important that *requires this thread to stay open* —
+  i.e. nothing that couldn't be picked up cleanly in a fresh thread.
+- A thread is safe to close when:
+  - all intended changes are **committed and pushed** (working tree clean), and
+  - anything shipped is **merged to `main`** if it was meant to deploy, and
+  - any follow-ups are **captured durably** (in `main`, in this file, or called
+    out to the user) rather than living only in the thread's chat history.
+- A new thread starts fresh with **no memory of prior chat** — only the repo
+  state and this file carry over. So if something must survive, write it down
+  here or commit it; don't rely on the conversation.
+- When closing, give a short sign-off: confirm the branch/`main` state and flag
+  any open follow-ups so they aren't lost.
+
 ## Build & verify
 
 - `yarn install` then `yarn build` (runs `tsc -b && vite build`) — use this to

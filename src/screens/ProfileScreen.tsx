@@ -114,9 +114,11 @@ export function ProfileScreen() {
                       ? 'Hot or Not'
                       : r.gameId === 'most-likely-to'
                         ? 'Most Likely To'
-                        : r.data.mode === 'classic'
-                          ? 'Famous Lines'
-                          : 'Insiders'}
+                        : r.gameId === 'guess-who-said-it'
+                          ? r.data.mode === 'classic'
+                            ? 'Famous Lines'
+                            : 'Insiders'
+                          : 'Would You Rather'}
                   </span>
                   <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
                   <span className="font-display font-extrabold text-hot">
@@ -124,11 +126,13 @@ export function ProfileScreen() {
                       ? `${r.data.choices.filter((c) => c.hot).length}/${r.data.choices.length} 🔥`
                       : r.gameId === 'most-likely-to'
                         ? `${r.data.votes.length} votes 🏆`
-                        : r.data.mode === 'classic'
-                          ? `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 💬`
-                          : r.data.mode === 'insiders-quote'
-                            ? 'Added a quote 🤫'
-                            : `${r.data.guesses.filter((g) => g.correct).length}/${r.data.guesses.length} 🕵️`}
+                        : r.gameId === 'guess-who-said-it'
+                          ? r.data.mode === 'classic'
+                            ? `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 💬`
+                            : r.data.mode === 'insiders-quote'
+                              ? 'Added a quote 🤫'
+                              : `${r.data.guesses.filter((g) => g.correct).length}/${r.data.guesses.length} 🕵️`
+                          : `${r.data.choices.length} picks 🤔`}
                   </span>
                 </div>
               ))}

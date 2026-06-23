@@ -51,6 +51,16 @@ export const GAMES: GameMeta[] = [
     logo: './games/guess-who-said-it.png',
     available: true,
   },
+  {
+    id: 'would-you-rather',
+    title: 'Would You Rather',
+    tagline: 'Two choices, endless chaos. Swipe your pick.',
+    emoji: '🤔',
+    gradient: 'from-hot via-purple-500 to-not',
+    route: '/play/would-you-rather/run',
+    logo: './games/would-you-rather.png',
+    available: true,
+  },
 ];
 
 export function getGame(id: string): GameMeta | undefined {
@@ -66,5 +76,4 @@ export interface ComingSoonGame {
 
 export const COMING_SOON: ComingSoonGame[] = [
   { title: 'Hot Takes', tagline: 'Defend your spiciest opinion', emoji: '🌶️' },
-  { title: 'Would You Rather', tagline: 'Pick your poison', emoji: '🤔' },
 ];

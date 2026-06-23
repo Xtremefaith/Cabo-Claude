@@ -16,6 +16,7 @@ export function HomeScreen() {
   const hasHotResults = results.some((r) => r.gameId === 'hot-or-not');
   const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
   const hasGuessResults = results.some((r) => r.gameId === 'guess-who-said-it');
+  const hasWyrResults = results.some((r) => r.gameId === 'would-you-rather');
   const spice = group?.settings?.spice ?? DEFAULT_SPICE;
 
   return (
@@ -128,6 +129,14 @@ export function HomeScreen() {
                 className="font-display text-sm font-extrabold text-sun active:scale-95"
               >
                 💬 Lines
+              </button>
+            )}
+            {hasWyrResults && (
+              <button
+                onClick={() => navigate('/play/would-you-rather/results')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                📊 Splits
               </button>
             )}
             {hasHotResults && (

@@ -29,7 +29,7 @@ export interface Candidate {
   blurb: string;
 }
 
-export type GameId = 'hot-or-not' | 'most-likely-to' | 'guess-who-said-it';
+export type GameId = 'hot-or-not' | 'most-likely-to' | 'guess-who-said-it' | 'would-you-rather';
 
 /** A single player's completed run of a game. */
 export interface HotOrNotChoice {
@@ -96,6 +96,22 @@ export interface InsidersGuessData {
 /** Payload union for Guess Who Said It, discriminated on `mode`. */
 export type GuessWhoResultData = GuessWhoClassicData | InsidersQuoteData | InsidersGuessData;
 
+/**
+ * One Would You Rather answer: this player picked `choice` ('a' or 'b') for a
+ * prompt. The option texts are stored alongside so the reveal stays stable even
+ * if the prompt deck changes later (same approach as MostLikelyVote).
+ */
+export interface WouldYouRatherChoice {
+  promptId: string;
+  optionA: string;
+  optionB: string;
+  choice: 'a' | 'b';
+}
+
+export interface WouldYouRatherResultData {
+  choices: WouldYouRatherChoice[];
+}
+
 interface BaseResult {
   id: string;
   /** The player who produced this result (the voter / swiper). */
@@ -118,5 +134,14 @@ export interface GuessWhoResult extends BaseResult {
   data: GuessWhoResultData;
 }
 
+export interface WouldYouRatherResult extends BaseResult {
+  gameId: 'would-you-rather';
+  data: WouldYouRatherResultData;
+}
+
 /** Discriminated union over `gameId` so each game's payload stays type-safe. */
-export type GameResult = HotOrNotResult | MostLikelyResult | GuessWhoResult;
+export type GameResult =
+  | HotOrNotResult
+  | MostLikelyResult
+  | GuessWhoResult
+  | WouldYouRatherResult;
