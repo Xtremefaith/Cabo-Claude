@@ -13,6 +13,10 @@ import { MostLikelyResultsScreen } from './games/mostLikelyTo/ResultsScreen';
 import { GuessWhoModeScreen } from './games/guessWhoSaidIt/ModeSelectScreen';
 import { GuessWhoScreen } from './games/guessWhoSaidIt/GuessWhoScreen';
 import { GuessWhoResultsScreen } from './games/guessWhoSaidIt/ResultsScreen';
+import { InsidersHubScreen } from './games/guessWhoSaidIt/InsidersHubScreen';
+import { AddQuoteScreen } from './games/guessWhoSaidIt/AddQuoteScreen';
+import { InsidersGuessScreen } from './games/guessWhoSaidIt/InsidersGuessScreen';
+import { InsidersResultsScreen } from './games/guessWhoSaidIt/InsidersResultsScreen';
 import { Screen } from './components/ui';
 import { isCloud } from './store/storage';
 import { useGroup, useMyPlayerId, useReady } from './store/useStore';
@@ -51,6 +55,10 @@ export default function App() {
         <Route path="/play/guess-who-said-it" element={<GuessWhoModeScreen />} />
         <Route path="/play/guess-who-said-it/run" element={<GuessWhoScreen />} />
         <Route path="/play/guess-who-said-it/results" element={<GuessWhoResultsScreen />} />
+        <Route path="/play/guess-who-said-it/insiders" element={<InsidersHubScreen />} />
+        <Route path="/play/guess-who-said-it/insiders/add" element={<AddQuoteScreen />} />
+        <Route path="/play/guess-who-said-it/insiders/play" element={<InsidersGuessScreen />} />
+        <Route path="/play/guess-who-said-it/insiders/results" element={<InsidersResultsScreen />} />
         <Route path="/manage" element={<ManageGroupScreen />} />
         <Route path="/players/:playerId" element={<ProfileScreen />} />
         <Route path="/reveal" element={<RevealScreen />} />

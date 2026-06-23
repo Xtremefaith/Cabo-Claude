@@ -114,7 +114,9 @@ export function ProfileScreen() {
                       ? 'Hot or Not'
                       : r.gameId === 'most-likely-to'
                         ? 'Most Likely To'
-                        : 'Famous Lines'}
+                        : r.data.mode === 'classic'
+                          ? 'Famous Lines'
+                          : 'Insiders'}
                   </span>
                   <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
                   <span className="font-display font-extrabold text-hot">
@@ -122,7 +124,11 @@ export function ProfileScreen() {
                       ? `${r.data.choices.filter((c) => c.hot).length}/${r.data.choices.length} 🔥`
                       : r.gameId === 'most-likely-to'
                         ? `${r.data.votes.length} votes 🏆`
-                        : `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 💬`}
+                        : r.data.mode === 'classic'
+                          ? `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 💬`
+                          : r.data.mode === 'insiders-quote'
+                            ? 'Added a quote 🤫'
+                            : `${r.data.guesses.filter((g) => g.correct).length}/${r.data.guesses.length} 🕵️`}
                   </span>
                 </div>
               ))}

@@ -63,14 +63,38 @@ export interface GuessWhoAnswer {
   correct: boolean;
 }
 
-export interface GuessWhoResultData {
-  /**
-   * Which deck this round used. 'classic' = the preloaded Famous Lines deck
-   * (variant B). Reserved for a future 'insiders' (group-authored) mode.
-   */
+/** Classic (variant B): a played round of the preloaded Famous Lines deck. */
+export interface GuessWhoClassicData {
   mode: 'classic';
   answers: GuessWhoAnswer[];
 }
+
+/**
+ * Insiders (variant A): a quote the group authored. The result's `id` is the
+ * quote id and its `playerId` is whoever added it; `saidByPlayerId` is the
+ * group member who actually said it — the thing everyone else guesses.
+ */
+export interface InsidersQuoteData {
+  mode: 'insiders-quote';
+  saidByPlayerId: string;
+  text: string;
+}
+
+/** One guess about who said a particular Insiders quote. */
+export interface InsidersGuess {
+  quoteId: string;
+  guessPlayerId: string;
+  correct: boolean;
+}
+
+/** Insiders: one player's batch of guesses from a play session. */
+export interface InsidersGuessData {
+  mode: 'insiders-guess';
+  guesses: InsidersGuess[];
+}
+
+/** Payload union for Guess Who Said It, discriminated on `mode`. */
+export type GuessWhoResultData = GuessWhoClassicData | InsidersQuoteData | InsidersGuessData;
 
 interface BaseResult {
   id: string;

@@ -41,36 +41,33 @@ export function GuessWhoModeScreen() {
           </span>
         </motion.button>
 
-        {/* Variant A — coming soon */}
-        <motion.div
+        {/* Variant A — playable */}
+        <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          aria-disabled
-          className="relative overflow-hidden rounded-3xl border border-white/10 bg-night-800/60 p-5"
+          onClick={() => navigate('/play/guess-who-said-it/insiders')}
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-500 p-5 text-left shadow-card active:scale-[0.98]"
         >
-          <div className="absolute right-3 top-3 rounded-full bg-black/40 px-2.5 py-0.5 font-body text-[10px] font-extrabold uppercase tracking-widest text-white/55">
-            Soon
-          </div>
           <div className="flex items-center gap-4">
-            <span className="text-4xl opacity-70 grayscale">🤫</span>
+            <span className="text-4xl">🤫</span>
             <div className="min-w-0">
-              <h2 className="font-display text-2xl font-extrabold text-white/80">Insiders</h2>
-              <p className="font-body text-sm font-bold text-white/40">
+              <h2 className="font-display text-2xl font-extrabold text-night-900">Insiders</h2>
+              <p className="font-body text-sm font-bold text-night-900/70">
                 Quotes from your own crew. Add the wild things people actually said, then guess
                 who said it.
               </p>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded-full bg-white/5 px-3 py-1 font-display text-xs font-extrabold uppercase tracking-widest text-white/35">
+            <span className="rounded-full bg-night-900/20 px-3 py-1 font-display text-xs font-extrabold uppercase tracking-widest text-night-900">
               ＋ Add a quote
             </span>
-            <span className="rounded-full bg-white/5 px-3 py-1 font-display text-xs font-extrabold uppercase tracking-widest text-white/35">
+            <span className="rounded-full bg-night-900/20 px-3 py-1 font-display text-xs font-extrabold uppercase tracking-widest text-night-900">
               ▶ Play
             </span>
           </div>
-        </motion.div>
+        </motion.button>
       </div>
     </Screen>
   );

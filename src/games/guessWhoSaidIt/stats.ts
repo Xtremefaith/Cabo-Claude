@@ -25,6 +25,7 @@ export interface GuessWhoStanding {
 export function buildGuessWhoLeaderboard(results: GameResult[]): GuessWhoStanding[] {
   const byPlayer = new Map<string, { correct: number; total: number }>();
   for (const g of guessWhoResults(results)) {
+    if (g.data.mode !== 'classic') continue;
     const tally = byPlayer.get(g.playerId) ?? { correct: 0, total: 0 };
     for (const a of g.data.answers) {
       tally.total += 1;
@@ -50,7 +51,7 @@ export function buildGuessWhoLeaderboard(results: GameResult[]): GuessWhoStandin
 export function myAnsweredQuotes(results: GameResult[], myPlayerId: string): Set<string> {
   const ids = new Set<string>();
   for (const g of guessWhoResults(results)) {
-    if (g.playerId !== myPlayerId) continue;
+    if (g.playerId !== myPlayerId || g.data.mode !== 'classic') continue;
     for (const a of g.data.answers) ids.add(a.promptId);
   }
   return ids;
@@ -59,7 +60,8 @@ export function myAnsweredQuotes(results: GameResult[], myPlayerId: string): Set
 /** This player's most recent round, for the post-game review. */
 export function myLatestRound(results: GameResult[], myPlayerId: string): GuessWhoAnswer[] {
   const mine = guessWhoResults(results)
-    .filter((g) => g.playerId === myPlayerId)
+    .filter((g) => g.playerId === myPlayerId && g.data.mode === 'classic')
     .sort((a, b) => b.playedAt - a.playedAt);
-  return mine[0]?.data.answers ?? [];
+  const latest = mine[0];
+  return latest && latest.data.mode === 'classic' ? latest.data.answers : [];
 }

@@ -44,7 +44,7 @@ export const GAMES: GameMeta[] = [
   {
     id: 'guess-who-said-it',
     title: 'Guess Who Said It',
-    tagline: 'Famous movie lines now — your crew’s quotes soon.',
+    tagline: 'Famous movie lines, or your crew’s own quotes.',
     emoji: '💬',
     gradient: 'from-emerald-500 via-teal-500 to-sky-500',
     route: '/play/guess-who-said-it',
