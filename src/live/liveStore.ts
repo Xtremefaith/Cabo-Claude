@@ -16,7 +16,6 @@ import { getGroup, getMyPlayerId } from '../store/storage';
 import { uid } from '../lib/util';
 import { pointsFor } from './scoring';
 import type {
-  LiveDeckCard,
   LivePhase,
   LiveSession,
   SessionAnswer,
@@ -139,7 +138,7 @@ function subscribeRealtime(gid: string) {
 // --------------------------------------------------------------- writes ---
 /** Host: create a fresh room (lobby) and, if playing, join it. */
 export async function hostCreateSession(
-  deck: LiveDeckCard[],
+  deck: unknown[],
   config: SessionConfig,
   hostPlays: boolean,
 ): Promise<void> {
@@ -213,19 +212,35 @@ export async function becomeHost(): Promise<void> {
   await patchSession({ host_player_id: me });
 }
 
-/** Submit my answer to the current question. First answer wins (locked client-side too). */
-export async function submitAnswer(answer: string): Promise<void> {
+/**
+ * Submit my answer to the current question. First answer wins (locked
+ * client-side too). Games that score (trivia) can pass an explicit `scoring`;
+ * opinion games (Most Likely To) pass `{ correct: null, points: 0 }`. With no
+ * `scoring` we fall back to the trivia rule: correct if `answer` matches the
+ * card's `.answer`, with speed-scaled points.
+ */
+export async function submitAnswer(
+  answer: string,
+  scoring?: { correct: boolean | null; points: number },
+): Promise<void> {
   if (!supabase || !session || session.questionStartedAt === null) return;
   const me = getMyPlayerId();
   if (!me) return;
   const idx = session.currentIndex;
-  const card = session.deck[idx];
+  const card = session.deck[idx] as { answer?: string } | undefined;
   if (!card) return;
 
-  const correct = answer === card.answer;
-  const elapsed = Date.now() - session.questionStartedAt;
-  const limit = (session.config.questionSeconds ?? 20) * 1000;
-  const points = pointsFor(correct, elapsed, limit);
+  let correct: boolean | null;
+  let points: number;
+  if (scoring) {
+    correct = scoring.correct;
+    points = scoring.points;
+  } else {
+    correct = answer === card.answer;
+    const elapsed = Date.now() - session.questionStartedAt;
+    const limit = (session.config.questionSeconds ?? 20) * 1000;
+    points = pointsFor(correct, elapsed, limit);
+  }
 
   const { error } = await supabase.from('session_answers').upsert(
     {
@@ -261,7 +276,7 @@ function rowToSession(r: any): LiveSession {
     hostPlays: r.host_plays,
     phase: r.phase as LivePhase,
     currentIndex: r.current_index,
-    deck: (r.deck ?? []) as LiveDeckCard[],
+    deck: (r.deck ?? []) as unknown[],
     questionStartedAt: r.question_started_at ? new Date(r.question_started_at).getTime() : null,
     config: (r.config ?? {}) as SessionConfig,
   };

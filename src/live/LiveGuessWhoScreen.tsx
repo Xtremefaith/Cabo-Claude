@@ -26,6 +26,7 @@ import {
   submitAnswer,
 } from './liveStore';
 import { liveLeaderboard } from './scoring';
+import { LiveFallback, LiveHeader, useNow } from './ui';
 import type { LiveDeckCard, LiveSession, SessionAnswer } from './types';
 
 const GAME_ID = 'guess-who-said-it';
@@ -49,7 +50,7 @@ export function LiveGuessWhoScreen() {
 
   if (!isCloud()) {
     return (
-      <Fallback
+      <LiveFallback
         title="Live play needs the cloud"
         body="Famous Lines is now a live, play-together game. Connect the group to Supabase to host a room from one phone and play across the crew."
         onHome={() => navigate('/')}
@@ -58,7 +59,7 @@ export function LiveGuessWhoScreen() {
   }
   if (!me) {
     return (
-      <Fallback
+      <LiveFallback
         title="Set up your player first"
         body="Live Famous Lines is a group game — join your crew and create your player to play."
         onHome={() => navigate('/')}
@@ -176,7 +177,7 @@ function LobbyView({
 
   return (
     <Screen>
-      <Header title="🎬 Lobby" onQuit={onQuit} />
+      <LiveHeader title="🎬 Lobby" onQuit={onQuit} />
       <div className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
         <div className="text-5xl">🎉</div>
         <div>
@@ -243,7 +244,7 @@ function QuestionView({
 }) {
   const now = useNow(session.phase === 'question');
   const idx = session.currentIndex;
-  const card = session.deck[idx];
+  const card = (session.deck as LiveDeckCard[])[idx];
 
   const myAnswer = answers.find((a) => a.questionIndex === idx && a.playerId === myId);
   const answeredCount = useMemo(
@@ -269,13 +270,13 @@ function QuestionView({
     }
   }, [isHost, timeUp, everyoneIn]);
 
-  if (!card) return <Fallback title="…" body="Loading question." onHome={onQuit} />;
+  if (!card) return <LiveFallback title="…" body="Loading question." onHome={onQuit} />;
 
   const pct = Math.max(0, Math.min(100, (1 - elapsed / limitMs) * 100));
 
   return (
     <Screen>
-      <Header title={`💬 ${idx + 1} / ${session.deck.length}`} onQuit={onQuit} />
+      <LiveHeader title={`💬 ${idx + 1} / ${session.deck.length}`} onQuit={onQuit} />
 
       {/* Timer bar */}
       <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-white/10">
@@ -344,7 +345,7 @@ function RevealView({
   onQuit: () => void;
 }) {
   const idx = session.currentIndex;
-  const card = session.deck[idx];
+  const card = (session.deck as LiveDeckCard[])[idx];
   const isLast = idx + 1 >= session.deck.length;
 
   const thisQ = answers.filter((a) => a.questionIndex === idx);
@@ -356,11 +357,11 @@ function RevealView({
   const mine = thisQ.find((a) => a.playerId === myId);
   const board = useMemo(() => liveLeaderboard(answers), [answers]);
 
-  if (!card) return <Fallback title="…" body="Loading." onHome={onQuit} />;
+  if (!card) return <LiveFallback title="…" body="Loading." onHome={onQuit} />;
 
   return (
     <Screen>
-      <Header title={`💬 ${idx + 1} / ${session.deck.length}`} onQuit={onQuit} />
+      <LiveHeader title={`💬 ${idx + 1} / ${session.deck.length}`} onQuit={onQuit} />
 
       <div className="py-4 text-center">
         <h1 className="font-display text-2xl font-extrabold leading-tight">“{card.quote}”</h1>
@@ -455,7 +456,7 @@ function FinalView({
       return;
     }
     const gwAnswers: GuessWhoAnswer[] = mine.map((a) => ({
-      promptId: session.deck[a.questionIndex]?.promptId ?? '',
+      promptId: (session.deck as LiveDeckCard[])[a.questionIndex]?.promptId ?? '',
       pick: a.answer,
       correct: !!a.correct,
     }));
@@ -568,44 +569,4 @@ function HostHandoff() {
       Host gone? Tap to take over
     </button>
   );
-}
-
-function Header({ title, onQuit }: { title: string; onQuit: () => void }) {
-  return (
-    <div className="flex items-center justify-between pt-1">
-      <span className="font-display text-lg font-extrabold">{title}</span>
-      <button
-        onClick={() => {
-          if (confirm('Leave the live game?')) onQuit();
-        }}
-        className="glass flex h-8 w-8 items-center justify-center rounded-full text-white/70 active:scale-90"
-        aria-label="Leave"
-      >
-        ✕
-      </button>
-    </div>
-  );
-}
-
-function Fallback({ title, body, onHome }: { title: string; body: string; onHome: () => void }) {
-  return (
-    <Screen>
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-        <p className="font-display text-2xl font-extrabold">{title}</p>
-        <p className="max-w-xs font-body text-white/55">{body}</p>
-        <Button onClick={onHome}>Home</Button>
-      </div>
-    </Screen>
-  );
-}
-
-// Ticking clock for the question timer (only runs while active).
-function useNow(active: boolean): number {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (!active) return;
-    const t = setInterval(() => setNow(Date.now()), 250);
-    return () => clearInterval(t);
-  }, [active]);
-  return now;
 }

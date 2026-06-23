@@ -90,7 +90,7 @@ export function MostLikelyResultsScreen() {
           <div className="flex flex-1 flex-col items-center justify-center gap-4 py-10 text-center">
             <div className="text-5xl">🏆</div>
             <p className="font-display text-2xl font-extrabold">No votes yet</p>
-            <Button onClick={() => navigate('/play/most-likely-to/run')}>Play Most Likely To</Button>
+            <Button onClick={() => navigate('/live/most-likely-to')}>Play Most Likely To</Button>
           </div>
         )}
 
@@ -162,7 +162,7 @@ export function MostLikelyResultsScreen() {
       </div>
 
       <div className="mt-3 flex flex-col gap-2">
-        <Button onClick={() => navigate('/play/most-likely-to/run')}>Vote again</Button>
+        <Button onClick={() => navigate('/live/most-likely-to')}>Vote again</Button>
         <Button variant="ghost" onClick={() => navigate('/')}>
           Back to Cabo
         </Button>

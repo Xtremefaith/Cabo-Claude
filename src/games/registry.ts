@@ -34,10 +34,10 @@ export const GAMES: GameMeta[] = [
   {
     id: 'most-likely-to',
     title: 'Most Likely To',
-    tagline: 'Vote your crew by their pics. See who gets crowned.',
+    tagline: 'Live vote-off — crown your crew, together.',
     emoji: '🏆',
     gradient: 'from-indigo-500 via-purple-500 to-hot',
-    route: '/play/most-likely-to/run',
+    route: '/live/most-likely-to',
     logo: './games/most-likely-to.png',
     available: true,
   },

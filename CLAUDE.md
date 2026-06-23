@@ -30,17 +30,29 @@ observe via Realtime while the host advances a phase machine:
 - Client engine lives in **`src/live/`** (kept separate from `store/storage.ts`,
   whose re-hydrate-everything model is too heavy for per-answer traffic):
   `liveStore.ts` (own Realtime channel + actions), `useLiveSession.ts`,
-  `scoring.ts` (pure, speed-scaled points + leaderboard), `LiveGuessWhoScreen.tsx`.
+  `scoring.ts` (pure, speed-scaled points + leaderboard), shared `ui.tsx`
+  (header/fallback/timer), and one screen per live game.
+- **The engine is game-agnostic.** `session.deck` is `unknown[]` and each screen
+  casts to its own card type (`LiveDeckCard` for trivia, `MostLikelyCard` for
+  Most Likely To). `submitAnswer(answer, scoring?)` takes caller-supplied
+  `{ correct, points }`; trivia omits it and falls back to the speed-scaled rule,
+  opinion games pass `{ correct: null, points: 0 }`.
 - **Scoring is hybrid**: speed-based points + leaderboard only where there's a
-  correct answer. At a room's end each device persists its own run via the normal
-  `addResult`, so the existing all-time leaderboard / profiles keep working.
+  correct answer (trivia). Opinion games (Most Likely To) are a pure tally — no
+  score, just the crowned reveal. At a room's end each device persists its own run
+  via the normal `addResult`, so the existing all-time stats / profiles keep working.
 - **Host control is a UI convention**, not DB-enforced (`players` aren't tied to
   `auth.uid()` — matches the trusted-group model). A "take over as host" escape
-  exists if the host drops.
+  exists if the host drops. When hosting, the "are you playing too?" prompt sets
+  `host_plays` (a non-playing host just drives and isn't a vote option / on the board).
 
-**Pilot (current state):** only **Guess Who Said It → Famous Lines** is live
-(route `/live/guess-who-said-it`, sync-only). The other 3 games + the Insiders mode
-are still async until ported (see Backlog).
+**Live so far (sync-only):**
+- **Guess Who Said It → Famous Lines** — `/live/guess-who-said-it`
+  (`LiveGuessWhoScreen.tsx`): trivia, speed points + leaderboard.
+- **Most Likely To** — `/live/most-likely-to` (`LiveMostLikelyScreen.tsx`): vote a
+  crew member, no score, crowned reveal + "most crowned" superlative.
+
+The other 2 games + the Insiders mode are still async until ported (see Backlog).
 
 ## Backlog (not yet built)
 
@@ -48,9 +60,9 @@ are still async until ported (see Backlog).
 - **Big-screen / "TV" host mode** — a passive host display (question + live
   scoreboard) while players answer on phones. The `host_plays` flag already
   distinguishes a non-playing host driver.
-- **Port the other games to live + retire their async flows** (synchronous-only is
-  the end state): Would You Rather & Most Likely To (live tally, no score), Hot or
-  Not, and Guess Who Said It → Insiders.
+- **Port the remaining games to live + retire their async flows** (synchronous-only
+  is the end state): Would You Rather (live tally, no score), Hot or Not, and Guess
+  Who Said It → Insiders.
 
 ## Git lifecycle (decided)
 

@@ -3,7 +3,7 @@
 
 export type LivePhase = 'lobby' | 'question' | 'reveal' | 'final';
 
-/** One frozen question in a live deck (Guess Who Said It / Famous Lines). */
+/** One frozen question in a live trivia deck (Guess Who Said It / Famous Lines). */
 export interface LiveDeckCard {
   promptId: string;
   quote: string;
@@ -12,6 +12,12 @@ export interface LiveDeckCard {
   /** Answer + decoys, pre-shuffled once at room creation so order is stable. */
   options: string[];
   hint?: string;
+}
+
+/** One frozen question in a live Most Likely To deck (options are the live roster). */
+export interface MostLikelyCard {
+  promptId: string;
+  text: string;
 }
 
 export interface SessionConfig {
@@ -30,7 +36,12 @@ export interface LiveSession {
   phase: LivePhase;
   /** Which question is live; -1 in the lobby. */
   currentIndex: number;
-  deck: LiveDeckCard[];
+  /**
+   * Frozen, ordered questions so every device sees identical cards/order. The
+   * card shape is per-game — each screen casts to its own card type
+   * (LiveDeckCard for trivia, MostLikelyCard for Most Likely To, …).
+   */
+  deck: unknown[];
   /** Epoch ms when the current question went live (null outside 'question'). */
   questionStartedAt: number | null;
   config: SessionConfig;
