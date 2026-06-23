@@ -15,6 +15,7 @@ export function HomeScreen() {
   const group = useGroup();
   const hasHotResults = results.some((r) => r.gameId === 'hot-or-not');
   const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
+  const hasGuessResults = results.some((r) => r.gameId === 'guess-who-said-it');
   const spice = group?.settings?.spice ?? DEFAULT_SPICE;
 
   return (
@@ -119,6 +120,14 @@ export function HomeScreen() {
                 className="font-display text-sm font-extrabold text-sun active:scale-95"
               >
                 🏆 Results
+              </button>
+            )}
+            {hasGuessResults && (
+              <button
+                onClick={() => navigate('/play/guess-who-said-it/results')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                💬 Lines
               </button>
             )}
             {hasHotResults && (

@@ -41,6 +41,16 @@ export const GAMES: GameMeta[] = [
     logo: './games/most-likely-to.png',
     available: true,
   },
+  {
+    id: 'guess-who-said-it',
+    title: 'Guess Who Said It',
+    tagline: 'Famous movie lines now — your crew’s quotes soon.',
+    emoji: '💬',
+    gradient: 'from-emerald-500 via-teal-500 to-sky-500',
+    route: '/play/guess-who-said-it',
+    logo: './games/guess-who-said-it.png',
+    available: true,
+  },
 ];
 
 export function getGame(id: string): GameMeta | undefined {
@@ -57,5 +67,4 @@ export interface ComingSoonGame {
 export const COMING_SOON: ComingSoonGame[] = [
   { title: 'Hot Takes', tagline: 'Defend your spiciest opinion', emoji: '🌶️' },
   { title: 'Would You Rather', tagline: 'Pick your poison', emoji: '🤔' },
-  { title: 'Guess Who Said It', tagline: 'Match the quote to the player', emoji: '💬' },
 ];

@@ -29,7 +29,7 @@ export interface Candidate {
   blurb: string;
 }
 
-export type GameId = 'hot-or-not' | 'most-likely-to';
+export type GameId = 'hot-or-not' | 'most-likely-to' | 'guess-who-said-it';
 
 /** A single player's completed run of a game. */
 export interface HotOrNotChoice {
@@ -54,6 +54,24 @@ export interface MostLikelyResultData {
   votes: MostLikelyVote[];
 }
 
+/** One answer in a Guess Who Said It round. */
+export interface GuessWhoAnswer {
+  promptId: string;
+  /** The film the player picked. */
+  pick: string;
+  /** Whether `pick` matched the prompt's correct answer. */
+  correct: boolean;
+}
+
+export interface GuessWhoResultData {
+  /**
+   * Which deck this round used. 'classic' = the preloaded Famous Lines deck
+   * (variant B). Reserved for a future 'insiders' (group-authored) mode.
+   */
+  mode: 'classic';
+  answers: GuessWhoAnswer[];
+}
+
 interface BaseResult {
   id: string;
   /** The player who produced this result (the voter / swiper). */
@@ -71,5 +89,10 @@ export interface MostLikelyResult extends BaseResult {
   data: MostLikelyResultData;
 }
 
+export interface GuessWhoResult extends BaseResult {
+  gameId: 'guess-who-said-it';
+  data: GuessWhoResultData;
+}
+
 /** Discriminated union over `gameId` so each game's payload stays type-safe. */
-export type GameResult = HotOrNotResult | MostLikelyResult;
+export type GameResult = HotOrNotResult | MostLikelyResult | GuessWhoResult;

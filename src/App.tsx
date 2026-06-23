@@ -10,6 +10,9 @@ import { ManageGroupScreen } from './screens/ManageGroupScreen';
 import { HotOrNotScreen } from './games/hotOrNot/HotOrNotScreen';
 import { MostLikelyScreen } from './games/mostLikelyTo/MostLikelyScreen';
 import { MostLikelyResultsScreen } from './games/mostLikelyTo/ResultsScreen';
+import { GuessWhoModeScreen } from './games/guessWhoSaidIt/ModeSelectScreen';
+import { GuessWhoScreen } from './games/guessWhoSaidIt/GuessWhoScreen';
+import { GuessWhoResultsScreen } from './games/guessWhoSaidIt/ResultsScreen';
 import { Screen } from './components/ui';
 import { isCloud } from './store/storage';
 import { useGroup, useMyPlayerId, useReady } from './store/useStore';
@@ -45,6 +48,9 @@ export default function App() {
         <Route path="/play/:gameId/run/:playerId/:category" element={<HotOrNotScreen />} />
         <Route path="/play/most-likely-to/run" element={<MostLikelyScreen />} />
         <Route path="/play/most-likely-to/results" element={<MostLikelyResultsScreen />} />
+        <Route path="/play/guess-who-said-it" element={<GuessWhoModeScreen />} />
+        <Route path="/play/guess-who-said-it/run" element={<GuessWhoScreen />} />
+        <Route path="/play/guess-who-said-it/results" element={<GuessWhoResultsScreen />} />
         <Route path="/manage" element={<ManageGroupScreen />} />
         <Route path="/players/:playerId" element={<ProfileScreen />} />
         <Route path="/reveal" element={<RevealScreen />} />
