@@ -17,6 +17,7 @@ import { InsidersHubScreen } from './games/guessWhoSaidIt/InsidersHubScreen';
 import { AddQuoteScreen } from './games/guessWhoSaidIt/AddQuoteScreen';
 import { InsidersGuessScreen } from './games/guessWhoSaidIt/InsidersGuessScreen';
 import { InsidersResultsScreen } from './games/guessWhoSaidIt/InsidersResultsScreen';
+import { LiveGuessWhoScreen } from './live/LiveGuessWhoScreen';
 import { WouldYouRatherScreen } from './games/wouldYouRather/WouldYouRatherScreen';
 import { WouldYouRatherResultsScreen } from './games/wouldYouRather/ResultsScreen';
 import { Screen } from './components/ui';
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="/play/most-likely-to/run" element={<MostLikelyScreen />} />
         <Route path="/play/most-likely-to/results" element={<MostLikelyResultsScreen />} />
         <Route path="/play/guess-who-said-it" element={<GuessWhoModeScreen />} />
+        <Route path="/live/guess-who-said-it" element={<LiveGuessWhoScreen />} />
         <Route path="/play/guess-who-said-it/run" element={<GuessWhoScreen />} />
         <Route path="/play/guess-who-said-it/results" element={<GuessWhoResultsScreen />} />
         <Route path="/play/guess-who-said-it/insiders" element={<InsidersHubScreen />} />

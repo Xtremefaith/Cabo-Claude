@@ -24,7 +24,7 @@ export function GuessWhoModeScreen() {
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          onClick={() => navigate('/play/guess-who-said-it/run')}
+          onClick={() => navigate('/live/guess-who-said-it')}
           className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 p-5 text-left shadow-card active:scale-[0.98]"
         >
           <div className="flex items-center gap-4">
@@ -32,12 +32,13 @@ export function GuessWhoModeScreen() {
             <div className="min-w-0">
               <h2 className="font-display text-2xl font-extrabold text-night-900">Famous Lines</h2>
               <p className="font-body text-sm font-bold text-night-900/70">
-                Guess the movie behind iconic quotes. Beat your crew on the leaderboard.
+                Live trivia — everyone answers the same movie quote at once. Fastest correct guess
+                tops the leaderboard.
               </p>
             </div>
           </div>
           <span className="mt-4 inline-flex items-center gap-1 rounded-full bg-night-900/20 px-3 py-1 font-display text-xs font-extrabold uppercase tracking-widest text-night-900">
-            Play now ›
+            Play live ›
           </span>
         </motion.button>
 

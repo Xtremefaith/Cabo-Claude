@@ -36,7 +36,7 @@ export function GuessWhoResultsScreen() {
           <div className="flex flex-1 flex-col items-center justify-center gap-4 py-10 text-center">
             <div className="text-5xl">💬</div>
             <p className="font-display text-2xl font-extrabold">No rounds yet</p>
-            <Button onClick={() => navigate('/play/guess-who-said-it/run')}>
+            <Button onClick={() => navigate('/live/guess-who-said-it')}>
               Play Famous Lines
             </Button>
           </div>
@@ -112,7 +112,7 @@ export function GuessWhoResultsScreen() {
       </div>
 
       <div className="mt-3 flex flex-col gap-2">
-        <Button onClick={() => navigate('/play/guess-who-said-it/run')}>Play again</Button>
+        <Button onClick={() => navigate('/live/guess-who-said-it')}>Play again</Button>
         <Button variant="ghost" onClick={() => navigate('/')}>
           Back to Cabo
         </Button>

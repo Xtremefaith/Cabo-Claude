@@ -17,6 +17,41 @@ Key concepts:
   `private.is_group_member`), not by the password. The password only gates *new*
   joins, so rotating it does NOT revoke devices already in a group.
 
+## Live (synchronous) play — Kahoot-style
+
+Games are moving from self-paced/async to **synchronous, host-driven rooms** (the
+async model felt un-social). A **live session** is a shared room all group members
+observe via Realtime while the host advances a phase machine:
+`lobby → question → reveal → final`.
+
+- Backed by `game_sessions` / `session_players` / `session_answers`
+  (migration `20260623000001_live_sessions.sql`; member-scoped RLS via
+  `private.is_group_member`, same as players/results).
+- Client engine lives in **`src/live/`** (kept separate from `store/storage.ts`,
+  whose re-hydrate-everything model is too heavy for per-answer traffic):
+  `liveStore.ts` (own Realtime channel + actions), `useLiveSession.ts`,
+  `scoring.ts` (pure, speed-scaled points + leaderboard), `LiveGuessWhoScreen.tsx`.
+- **Scoring is hybrid**: speed-based points + leaderboard only where there's a
+  correct answer. At a room's end each device persists its own run via the normal
+  `addResult`, so the existing all-time leaderboard / profiles keep working.
+- **Host control is a UI convention**, not DB-enforced (`players` aren't tied to
+  `auth.uid()` — matches the trusted-group model). A "take over as host" escape
+  exists if the host drops.
+
+**Pilot (current state):** only **Guess Who Said It → Famous Lines** is live
+(route `/live/guess-who-said-it`, sync-only). The other 3 games + the Insiders mode
+are still async until ported (see Backlog).
+
+## Backlog (not yet built)
+
+- **Rename the app → "Social Arcade"** (party brand shift; deferred by request).
+- **Big-screen / "TV" host mode** — a passive host display (question + live
+  scoreboard) while players answer on phones. The `host_plays` flag already
+  distinguishes a non-playing host driver.
+- **Port the other games to live + retire their async flows** (synchronous-only is
+  the end state): Would You Rather & Most Likely To (live tally, no score), Hot or
+  Not, and Guess Who Said It → Insiders.
+
 ## Git lifecycle (decided)
 
 > **We do NOT have a development / staging environment at this time.** There is
