@@ -372,6 +372,13 @@ function RevealView({
   }, [answers, idx]);
   const mine = thisQ.find((a) => a.playerId === myId);
   const board = useMemo(() => liveLeaderboard(answers), [answers]);
+  // Who won THIS round — the fastest correct answer(s) (most points this question).
+  const roundWinners = useMemo(() => {
+    const correct = thisQ.filter((a) => a.correct && a.points > 0);
+    if (correct.length === 0) return [];
+    const top = Math.max(...correct.map((a) => a.points));
+    return correct.filter((a) => a.points === top);
+  }, [answers, idx]);
 
   if (!card) return <LiveFallback title="…" body="Loading." onHome={onQuit} />;
 
@@ -414,6 +421,40 @@ function RevealView({
           );
         })}
       </div>
+
+      {/* Who won this round (fastest correct) */}
+      {roundWinners.length > 0 ? (
+        <div className="mt-4 flex items-center gap-3 rounded-2xl bg-sun/15 p-3 ring-1 ring-sun/40">
+          <span className="text-2xl">⚡</span>
+          <div className="min-w-0 flex-1">
+            <p className="font-display text-xs font-extrabold uppercase tracking-widest text-sun">
+              {roundWinners.length > 1 ? 'Tied this round' : 'Won this round'}
+            </p>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              {roundWinners.map((w) => {
+                const p = getPlayer(w.playerId);
+                return p ? (
+                  <span
+                    key={w.playerId}
+                    className="flex items-center gap-1.5 font-display text-base font-extrabold"
+                  >
+                    <PlayerAvatar player={p} size={26} />
+                    {p.name}
+                    {w.playerId === myId && <span className="text-white/40">(you)</span>}
+                  </span>
+                ) : null;
+              })}
+            </div>
+          </div>
+          <span className="shrink-0 font-display text-lg font-extrabold text-sun">
+            +{roundWinners[0].points}
+          </span>
+        </div>
+      ) : (
+        <p className="mt-4 text-center font-body text-sm font-bold text-white/40">
+          Nobody got this one 🤷
+        </p>
+      )}
 
       {/* Running leaderboard */}
       <p className="mb-2 mt-4 font-display text-xs font-extrabold uppercase tracking-widest text-sun">
