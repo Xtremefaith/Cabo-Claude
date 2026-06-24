@@ -8,10 +8,10 @@ import { motion } from 'framer-motion';
 import { Button, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { useGroup, useMyPlayerId } from '../store/useStore';
-import { addResult, getPlayer, isCloud } from '../store/storage';
+import { addResult, getPlayer, getResults, isCloud } from '../store/storage';
 import { MOST_LIKELY_PROMPTS } from '../data/mostLikelyPrompts';
 import { DEFAULT_SPICE } from '../data/spice';
-import { sample, uid } from '../lib/util';
+import { pickFreshFirst, uid } from '../lib/util';
 import type { MostLikelyVote } from '../types';
 import { useLiveSession, useSessionAnswers, useSessionRoster } from './useLiveSession';
 import {
@@ -33,6 +33,25 @@ const GAME_ID = 'most-likely-to';
 const DECK_SIZE = 10;
 const QUESTION_SECONDS = 25;
 const NO_SCORE = { correct: null, points: 0 } as const;
+
+/** Prompt ids the whole group has already voted on (across every saved round). */
+function seenPromptIds(): Set<string> {
+  const seen = new Set<string>();
+  for (const r of getResults()) {
+    if (r.gameId === 'most-likely-to') for (const v of r.data.votes) seen.add(v.promptId);
+  }
+  return seen;
+}
+
+/** Build a fresh deck at/under the group's spice, preferring unplayed prompts. */
+function buildMostLikelyDeck(maxSpice: number): MostLikelyCard[] {
+  const seen = seenPromptIds();
+  const pool = MOST_LIKELY_PROMPTS.filter((p) => p.spice <= maxSpice);
+  return pickFreshFirst(pool, DECK_SIZE, (p) => seen.has(p.id)).map((p) => ({
+    promptId: p.id,
+    text: p.text,
+  }));
+}
 
 export function LiveMostLikelyScreen() {
   const navigate = useNavigate();
@@ -98,12 +117,7 @@ function StartView({ onStart }: { onStart: () => void }) {
   const [hostPlays, setHostPlays] = useState(true);
 
   const start = async () => {
-    const maxSpice = group?.settings?.spice ?? DEFAULT_SPICE;
-    const pool = MOST_LIKELY_PROMPTS.filter((p) => p.spice <= maxSpice);
-    const deck: MostLikelyCard[] = sample(pool, Math.min(DECK_SIZE, pool.length)).map((p) => ({
-      promptId: p.id,
-      text: p.text,
-    }));
+    const deck = buildMostLikelyDeck(group?.settings?.spice ?? DEFAULT_SPICE);
     await hostCreateSession(deck, { questionSeconds: QUESTION_SECONDS, deckSize: deck.length }, hostPlays);
   };
 
@@ -420,6 +434,7 @@ function FinalView({
   onQuit: () => void;
 }) {
   const deck = session.deck as MostLikelyCard[];
+  const group = useGroup();
 
   // Per-prompt crowns + who got crowned most overall.
   const { perPrompt, topCrowned } = useMemo(() => {
@@ -460,10 +475,8 @@ function FinalView({
   }, [session.id, answers, myId, deck]);
 
   const startNew = async () => {
-    const pool = MOST_LIKELY_PROMPTS;
-    const fresh: MostLikelyCard[] = sample(pool, Math.min(deck.length || DECK_SIZE, pool.length)).map(
-      (p) => ({ promptId: p.id, text: p.text }),
-    );
+    // A fresh room that prefers prompts the group hasn't voted on yet.
+    const fresh = buildMostLikelyDeck(group?.settings?.spice ?? DEFAULT_SPICE);
     await hostCreateSession(fresh, session.config, session.hostPlays);
   };
 

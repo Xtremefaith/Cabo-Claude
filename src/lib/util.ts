@@ -24,6 +24,19 @@ export function sample<T>(arr: T[], n: number): T[] {
   return shuffle(arr).slice(0, n);
 }
 
+/**
+ * Pick up to `n` items, preferring ones not yet `seen`. Unseen items (shuffled)
+ * come first, then already-seen ones (also shuffled) only to top up if there
+ * aren't enough fresh. Used so a live room exhausts the whole prompt pool before
+ * ever repeating a question the group has already played.
+ */
+export function pickFreshFirst<T>(arr: T[], n: number, seen: (item: T) => boolean): T[] {
+  const fresh = shuffle(arr.filter((x) => !seen(x)));
+  if (fresh.length >= n) return fresh.slice(0, n);
+  const used = shuffle(arr.filter((x) => seen(x)));
+  return [...fresh, ...used].slice(0, n);
+}
+
 export function initials(name: string): string {
   return name
     .trim()

@@ -7,10 +7,10 @@ import { motion } from 'framer-motion';
 import { Button, Screen } from '../components/ui';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { useGroup, useMyPlayerId } from '../store/useStore';
-import { addResult, getPlayer, isCloud } from '../store/storage';
+import { addResult, getPlayer, getResults, isCloud } from '../store/storage';
 import { QUOTE_PROMPTS } from '../data/quotePrompts';
 import { DEFAULT_SPICE } from '../data/spice';
-import { sample, shuffle, uid } from '../lib/util';
+import { pickFreshFirst, shuffle, uid } from '../lib/util';
 import type { GuessWhoAnswer } from '../types';
 import { useLiveSession, useSessionAnswers, useSessionRoster } from './useLiveSession';
 import {
@@ -33,6 +33,30 @@ const GAME_ID = 'guess-who-said-it';
 const DECK_SIZE = 8;
 const QUESTION_SECONDS = 20;
 const MEDALS = ['🥇', '🥈', '🥉'];
+
+/** Prompt ids the whole group has already played (across every saved round). */
+function seenQuoteIds(): Set<string> {
+  const seen = new Set<string>();
+  for (const r of getResults()) {
+    if (r.gameId === 'guess-who-said-it' && r.data.mode === 'classic') {
+      for (const a of r.data.answers) seen.add(a.promptId);
+    }
+  }
+  return seen;
+}
+
+/** Build a fresh deck at/under the group's spice, preferring unplayed quotes. */
+function buildFamousDeck(maxSpice: number): LiveDeckCard[] {
+  const seen = seenQuoteIds();
+  const pool = QUOTE_PROMPTS.filter((p) => p.spice <= maxSpice);
+  return pickFreshFirst(pool, DECK_SIZE, (p) => seen.has(p.id)).map((p) => ({
+    promptId: p.id,
+    quote: p.quote,
+    answer: p.answer,
+    hint: p.hint,
+    options: shuffle([p.answer, ...p.decoys]),
+  }));
+}
 
 export function LiveGuessWhoScreen() {
   const navigate = useNavigate();
@@ -107,15 +131,7 @@ function StartView({ onStart }: { onStart: () => void }) {
   const [hostPlays, setHostPlays] = useState(true);
 
   const start = async () => {
-    const maxSpice = group?.settings?.spice ?? DEFAULT_SPICE;
-    const pool = QUOTE_PROMPTS.filter((p) => p.spice <= maxSpice);
-    const deck: LiveDeckCard[] = sample(pool, Math.min(DECK_SIZE, pool.length)).map((p) => ({
-      promptId: p.id,
-      quote: p.quote,
-      answer: p.answer,
-      hint: p.hint,
-      options: shuffle([p.answer, ...p.decoys]),
-    }));
+    const deck = buildFamousDeck(group?.settings?.spice ?? DEFAULT_SPICE);
     await hostCreateSession(deck, { questionSeconds: QUESTION_SECONDS, deckSize: deck.length }, hostPlays);
   };
 
@@ -441,6 +457,7 @@ function FinalView({
   myId: string;
   onQuit: () => void;
 }) {
+  const group = useGroup();
   const board = useMemo(() => liveLeaderboard(answers), [answers]);
 
   // Persist my run to the all-time results store exactly once per session, so
@@ -471,18 +488,8 @@ function FinalView({
   }, [session.id, answers, myId]);
 
   const startNew = async () => {
-    const deck = session.deck; // reuse same group's deck size via StartView next time
-    // A fresh room: re-shuffle a new deck of the same size.
-    const pool = QUOTE_PROMPTS;
-    const fresh: LiveDeckCard[] = sample(pool, Math.min(deck.length || DECK_SIZE, pool.length)).map(
-      (p) => ({
-        promptId: p.id,
-        quote: p.quote,
-        answer: p.answer,
-        hint: p.hint,
-        options: shuffle([p.answer, ...p.decoys]),
-      }),
-    );
+    // A fresh room that prefers quotes the group hasn't played yet.
+    const fresh = buildFamousDeck(group?.settings?.spice ?? DEFAULT_SPICE);
     await hostCreateSession(fresh, session.config, session.hostPlays);
   };
 
