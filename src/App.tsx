@@ -3,6 +3,7 @@ import { HomeScreen } from './screens/HomeScreen';
 import { PlayerPickScreen } from './screens/PlayerPickScreen';
 import { CategoryPickScreen } from './screens/CategoryPickScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
+import { ResultsHubScreen } from './screens/ResultsHubScreen';
 import { RevealScreen } from './screens/RevealScreen';
 import { GroupGate } from './screens/GroupGate';
 import { PlayerSetupScreen } from './screens/PlayerSetupScreen';
@@ -75,6 +76,7 @@ export default function App() {
         <Route path="/play/would-you-rather/results" element={<WouldYouRatherResultsScreen />} />
         <Route path="/live/finish-the-lyric" element={<LiveFinishLyricScreen />} />
         <Route path="/play/finish-the-lyric/results" element={<FinishLyricResultsScreen />} />
+        <Route path="/results" element={<ResultsHubScreen />} />
         <Route path="/manage" element={<ManageGroupScreen />} />
         <Route path="/players/:playerId" element={<ProfileScreen />} />
         <Route path="/reveal" element={<RevealScreen />} />

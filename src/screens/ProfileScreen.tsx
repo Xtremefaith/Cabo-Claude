@@ -7,6 +7,8 @@ import { Headshot } from '../components/Headshot';
 import { PhotoPicker } from '../components/PhotoPicker';
 import { deletePlayer, getPlayer, getResultsForPlayer, updatePlayer } from '../store/storage';
 import { useResults } from '../store/useStore';
+import { buildGuessWhoLeaderboard } from '../games/guessWhoSaidIt/stats';
+import { buildMostLikelyReveal } from '../games/mostLikelyTo/stats';
 import { hotOrNotStats } from '../games/hotOrNot/stats';
 import { CELEBRITIES } from '../data/celebrities';
 import { resolveHeadshots } from '../lib/wikiImages';
@@ -18,7 +20,7 @@ const CANDIDATE_BY_NAME = new Map(CELEBRITIES.map((c) => [c.name, c]));
 export function ProfileScreen() {
   const { playerId = '' } = useParams();
   const navigate = useNavigate();
-  useResults(); // re-render when results change
+  const allResults = useResults(); // re-render when results change + used for crowns
   const player = getPlayer(playerId);
 
   // Photo modal: tap a candidate's name to show their picture for onlookers.
@@ -59,7 +61,31 @@ export function ProfileScreen() {
   }
 
   const results = getResultsForPlayer(player.id);
-  const stats = hotOrNotStats(results);
+
+  // --- live-game stats (the games that are actually playable now) ---
+  const roomsPlayed = results.filter(
+    (r) =>
+      r.gameId === 'most-likely-to' ||
+      r.gameId === 'would-you-rather' ||
+      r.gameId === 'finish-the-lyric' ||
+      r.gameId === 'heaven-or-hell' ||
+      (r.gameId === 'guess-who-said-it' && r.data.mode === 'classic'),
+  ).length;
+
+  const flStanding = buildGuessWhoLeaderboard(allResults).find((s) => s.playerId === player.id);
+  const flHasData = !!flStanding && flStanding.total > 0;
+
+  const myCrowns = buildMostLikelyReveal(allResults).filter((row) =>
+    row.winnerIds.includes(player.id),
+  );
+
+  const wyrAnswered = results.reduce(
+    (n, r) => (r.gameId === 'would-you-rather' ? n + r.data.choices.length : n),
+    0,
+  );
+
+  // --- retired game: Hot or Not (kept as an archive when there's history) ---
+  const hot = hotOrNotStats(results);
 
   return (
     <Screen>
@@ -74,30 +100,86 @@ export function ProfileScreen() {
       </div>
 
       <div className="mb-6 mt-6 grid grid-cols-3 gap-3">
-        <Stat label="Games" value={stats.gamesPlayed} />
-        <Stat label="Swipes" value={stats.totalSwipes} />
-        <Stat label="Hot %" value={`${Math.round(stats.hotRate * 100)}%`} accent />
+        <Stat label="Rooms" value={roomsPlayed} />
+        <Stat label="Lines Acc" value={flHasData ? `${flStanding!.accuracy}%` : '—'} accent />
+        <Stat label="Crowns 👑" value={myCrowns.length} />
       </div>
 
       <div className="flex-1 overflow-y-auto">
+        {/* Famous Lines */}
         <h2 className="mb-2 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
-          Hot or Not 🔥
+          Famous Lines 💬
         </h2>
-
-        {stats.totalSwipes === 0 ? (
-          <p className="rounded-2xl glass px-4 py-6 text-center font-body text-white/50">
-            No Hot or Not picks yet.
-          </p>
-        ) : (
-          <>
-            <p className="mb-3 font-body text-xs font-bold text-white/30">
-              Tap a name to show their picture 👀
+        {flHasData ? (
+          <div className="mb-5 glass rounded-2xl px-4 py-4">
+            <p className="font-display text-2xl font-extrabold">
+              {flStanding!.correct}
+              <span className="text-base text-white/40"> / {flStanding!.total} correct</span>
             </p>
-            <Chips title="Called Hot" tone="hot" names={stats.hotPicks} onSelect={openPhoto} />
-            <Chips title="Called Not" tone="not" names={stats.notPicks} onSelect={openPhoto} />
+            <p className="font-body text-xs font-bold text-white/45">
+              {flStanding!.accuracy}% accuracy across all rounds
+            </p>
+          </div>
+        ) : (
+          <p className="mb-5 glass rounded-2xl px-4 py-5 text-center font-body text-white/50">
+            No Famous Lines rounds yet.
+          </p>
+        )}
+
+        {/* Most Likely To */}
+        <h2 className="mb-2 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
+          Most Likely To 🏆
+        </h2>
+        {myCrowns.length > 0 ? (
+          <div className="mb-5">
+            <p className="mb-2 font-body text-sm font-bold text-white/55">
+              Crowned <span className="font-extrabold text-hot">{myCrowns.length}×</span> by the crew —
+              most likely to…
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {myCrowns.map((c) => (
+                <span
+                  key={c.promptId}
+                  className="rounded-full border border-hot/40 bg-hot/15 px-3 py-1 font-body text-sm font-bold text-hot-glow"
+                >
+                  {c.promptText}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="mb-5 glass rounded-2xl px-4 py-5 text-center font-body text-white/50">
+            Not crowned yet.
+          </p>
+        )}
+
+        {/* Would You Rather (light) */}
+        {wyrAnswered > 0 && (
+          <>
+            <h2 className="mb-2 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
+              Would You Rather 🤔
+            </h2>
+            <p className="mb-5 glass rounded-2xl px-4 py-4 font-body text-sm font-bold text-white/55">
+              Weighed in on <span className="font-extrabold text-white">{wyrAnswered}</span> dilemmas.
+            </p>
           </>
         )}
 
+        {/* Hot or Not — retired, shown only as an archive if there's history */}
+        {hot.totalSwipes > 0 && (
+          <>
+            <h3 className="mb-1 mt-1 font-display text-sm font-extrabold uppercase tracking-widest text-white/40">
+              Archive · Hot or Not 🔒
+            </h3>
+            <p className="mb-3 font-body text-xs font-bold text-white/30">
+              Retired game — tap a name to show their picture 👀
+            </p>
+            <Chips title="Called Hot" tone="hot" names={hot.hotPicks} onSelect={openPhoto} />
+            <Chips title="Called Not" tone="not" names={hot.notPicks} onSelect={openPhoto} />
+          </>
+        )}
+
+        {/* History (all games) */}
         {results.length > 0 && (
           <>
             <h3 className="mb-2 mt-5 font-display text-sm font-extrabold uppercase tracking-widest text-white/50">
@@ -150,9 +232,6 @@ export function ProfileScreen() {
       </div>
 
       <div className="mt-4 flex flex-col gap-3">
-        <Button onClick={() => navigate('/play/hot-or-not/category/' + player.id)}>
-          Play again
-        </Button>
         <button
           onClick={() => {
             if (confirm(`Delete ${player.name} and all their stats? This can't be undone.`)) {

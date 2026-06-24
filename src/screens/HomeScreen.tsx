@@ -13,11 +13,7 @@ export function HomeScreen() {
   const players = usePlayers();
   const results = useResults();
   const group = useGroup();
-  const hasHotResults = results.some((r) => r.gameId === 'hot-or-not');
-  const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
-  const hasGuessResults = results.some((r) => r.gameId === 'guess-who-said-it');
-  const hasWyrResults = results.some((r) => r.gameId === 'would-you-rather');
-  const hasLyricResults = results.some((r) => r.gameId === 'finish-the-lyric');
+  const hasResults = results.length > 0;
   const spice = group?.settings?.spice ?? DEFAULT_SPICE;
 
   return (
@@ -115,48 +111,14 @@ export function HomeScreen() {
           <p className="font-display text-sm font-extrabold uppercase tracking-widest text-white/60">
             👥 Players
           </p>
-          <div className="flex items-center gap-3">
-            {hasMltResults && (
-              <button
-                onClick={() => navigate('/play/most-likely-to/results')}
-                className="font-display text-sm font-extrabold text-sun active:scale-95"
-              >
-                🏆 Results
-              </button>
-            )}
-            {hasGuessResults && (
-              <button
-                onClick={() => navigate('/play/guess-who-said-it/results')}
-                className="font-display text-sm font-extrabold text-sun active:scale-95"
-              >
-                💬 Lines
-              </button>
-            )}
-            {hasWyrResults && (
-              <button
-                onClick={() => navigate('/play/would-you-rather/results')}
-                className="font-display text-sm font-extrabold text-sun active:scale-95"
-              >
-                📊 Splits
-              </button>
-            )}
-            {hasLyricResults && (
-              <button
-                onClick={() => navigate('/play/finish-the-lyric/results')}
-                className="font-display text-sm font-extrabold text-sun active:scale-95"
-              >
-                🎤 Lyrics
-              </button>
-            )}
-            {hasHotResults && (
-              <button
-                onClick={() => navigate('/reveal')}
-                className="font-display text-sm font-extrabold text-sun active:scale-95"
-              >
-                The Reveal 👀
-              </button>
-            )}
-          </div>
+          {hasResults && (
+            <button
+              onClick={() => navigate('/results')}
+              className="glass flex items-center gap-1.5 rounded-full px-3 py-1.5 font-display text-sm font-extrabold text-sun active:scale-95"
+            >
+              🏆 Results ›
+            </button>
+          )}
         </div>
 
         {players.length === 0 ? (
