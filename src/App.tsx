@@ -19,6 +19,7 @@ import { InsidersGuessScreen } from './games/guessWhoSaidIt/InsidersGuessScreen'
 import { InsidersResultsScreen } from './games/guessWhoSaidIt/InsidersResultsScreen';
 import { LiveGuessWhoScreen } from './live/LiveGuessWhoScreen';
 import { LiveMostLikelyScreen } from './live/LiveMostLikelyScreen';
+import { LiveWouldYouRatherScreen } from './live/LiveWouldYouRatherScreen';
 import { WouldYouRatherScreen } from './games/wouldYouRather/WouldYouRatherScreen';
 import { WouldYouRatherResultsScreen } from './games/wouldYouRather/ResultsScreen';
 import { Screen } from './components/ui';
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="/play/guess-who-said-it/insiders/add" element={<AddQuoteScreen />} />
         <Route path="/play/guess-who-said-it/insiders/play" element={<InsidersGuessScreen />} />
         <Route path="/play/guess-who-said-it/insiders/results" element={<InsidersResultsScreen />} />
+        <Route path="/live/would-you-rather" element={<LiveWouldYouRatherScreen />} />
         <Route path="/play/would-you-rather/run" element={<WouldYouRatherScreen />} />
         <Route path="/play/would-you-rather/results" element={<WouldYouRatherResultsScreen />} />
         <Route path="/manage" element={<ManageGroupScreen />} />

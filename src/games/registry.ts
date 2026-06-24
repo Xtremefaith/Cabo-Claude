@@ -18,6 +18,11 @@ export interface GameMeta {
    */
   logo?: string;
   available: boolean;
+  /**
+   * When set, the tile is shown locked with this short label stamped across it
+   * (e.g. "Too Dangerous") and isn't playable. Pair with `available: false`.
+   */
+  lockNote?: string;
 }
 
 export const GAMES: GameMeta[] = [
@@ -29,7 +34,8 @@ export const GAMES: GameMeta[] = [
     gradient: 'from-hot via-sun to-sun',
     route: '/play/hot-or-not',
     logo: './games/hot-or-not.png',
-    available: true,
+    available: false,
+    lockNote: 'Too Dangerous',
   },
   {
     id: 'most-likely-to',
@@ -54,10 +60,10 @@ export const GAMES: GameMeta[] = [
   {
     id: 'would-you-rather',
     title: 'Would You Rather',
-    tagline: 'Two choices, endless chaos. Swipe your pick.',
+    tagline: 'Live dilemmas — pick a side, watch the crew split.',
     emoji: '🤔',
     gradient: 'from-hot via-purple-500 to-not',
-    route: '/play/would-you-rather/run',
+    route: '/live/would-you-rather',
     logo: './games/would-you-rather.png',
     available: true,
   },

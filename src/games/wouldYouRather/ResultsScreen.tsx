@@ -92,7 +92,7 @@ export function WouldYouRatherResultsScreen() {
           <div className="flex flex-1 flex-col items-center justify-center gap-4 py-10 text-center">
             <div className="text-5xl">🤔</div>
             <p className="font-display text-2xl font-extrabold">No answers yet</p>
-            <Button onClick={() => navigate('/play/would-you-rather/run')}>
+            <Button onClick={() => navigate('/live/would-you-rather')}>
               Play Would You Rather
             </Button>
           </div>
@@ -171,7 +171,7 @@ export function WouldYouRatherResultsScreen() {
       </div>
 
       <div className="mt-3 flex flex-col gap-2">
-        <Button onClick={() => navigate('/play/would-you-rather/run')}>Play again</Button>
+        <Button onClick={() => navigate('/live/would-you-rather')}>Play again</Button>
         <Button variant="ghost" onClick={() => navigate('/')}>
           Back to Cabo
         </Button>

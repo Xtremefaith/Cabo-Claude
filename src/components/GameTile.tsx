@@ -10,35 +10,51 @@ const missingCache: Record<string, boolean> = {};
  */
 export function GameTile({ game, onClick }: { game: GameMeta; onClick: () => void }) {
   const [showLogo, setShowLogo] = useState(Boolean(game.logo) && !missingCache[game.id]);
+  const locked = !game.available;
 
   return (
     <button
-      disabled={!game.available}
+      disabled={locked}
       onClick={onClick}
-      className={`relative overflow-hidden rounded-3xl shadow-card transition active:scale-[0.98] disabled:opacity-40 ${
+      className={`relative overflow-hidden rounded-3xl shadow-card transition active:scale-[0.98] ${
         showLogo
           ? 'border border-white/10 bg-night-800 p-3'
           : `bg-gradient-to-br ${game.gradient} p-5 text-left`
       }`}
     >
-      {showLogo && game.logo ? (
-        <img
-          src={game.logo}
-          alt={game.title}
-          draggable={false}
-          onError={() => {
-            missingCache[game.id] = true;
-            setShowLogo(false);
-          }}
-          className="mx-auto h-40 w-auto max-w-full object-contain"
-        />
-      ) : (
-        <div className="flex items-center gap-4">
-          <span className="text-4xl">{game.emoji}</span>
-          <div>
-            <h3 className="font-display text-2xl font-extrabold text-night-900">{game.title}</h3>
-            <p className="font-body text-sm font-bold text-night-900/70">{game.tagline}</p>
+      {/* Content (dimmed when locked so the stamp stays punchy) */}
+      <div className={locked ? 'opacity-30 grayscale' : ''}>
+        {showLogo && game.logo ? (
+          <img
+            src={game.logo}
+            alt={game.title}
+            draggable={false}
+            onError={() => {
+              missingCache[game.id] = true;
+              setShowLogo(false);
+            }}
+            className="mx-auto h-40 w-auto max-w-full object-contain"
+          />
+        ) : (
+          <div className="flex items-center gap-4">
+            <span className="text-4xl">{game.emoji}</span>
+            <div>
+              <h3 className="font-display text-2xl font-extrabold text-night-900">{game.title}</h3>
+              <p className="font-body text-sm font-bold text-night-900/70">{game.tagline}</p>
+            </div>
           </div>
+        )}
+      </div>
+
+      {/* Lock stamp */}
+      {locked && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <span
+            className="rotate-[-11deg] rounded-xl border-[3px] border-hot/90 bg-night-900/45 px-4 py-1.5 font-display text-xl font-extrabold uppercase tracking-[0.15em] text-hot backdrop-blur-[1px]"
+            style={{ textShadow: '0 1px 10px rgba(255,61,119,0.6)' }}
+          >
+            🔒 {game.lockNote ?? 'Locked'}
+          </span>
         </div>
       )}
     </button>

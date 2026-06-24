@@ -51,8 +51,12 @@ observe via Realtime while the host advances a phase machine:
   (`LiveGuessWhoScreen.tsx`): trivia, speed points + leaderboard.
 - **Most Likely To** — `/live/most-likely-to` (`LiveMostLikelyScreen.tsx`): vote a
   crew member, no score, crowned reveal + "most crowned" superlative.
+- **Would You Rather** — `/live/would-you-rather` (`LiveWouldYouRatherScreen.tsx`):
+  binary A/B, no score, reveal is the group's split + "most divided" superlative.
 
-The other 2 games + the Insiders mode are still async until ported (see Backlog).
+The Insiders mode is still async until ported. **Hot or Not is locked** — its home
+tile carries a "Too Dangerous" stamp (`available: false` + `lockNote` in the
+registry; rendered by `GameTile`) and isn't playable.
 
 ## Backlog (not yet built)
 
@@ -60,9 +64,8 @@ The other 2 games + the Insiders mode are still async until ported (see Backlog)
 - **Big-screen / "TV" host mode** — a passive host display (question + live
   scoreboard) while players answer on phones. The `host_plays` flag already
   distinguishes a non-playing host driver.
-- **Port the remaining games to live + retire their async flows** (synchronous-only
-  is the end state): Would You Rather (live tally, no score), Hot or Not, and Guess
-  Who Said It → Insiders.
+- **Guess Who Said It → Insiders**: still async; port to live (or decide its fate)
+  when ready. Hot or Not is intentionally locked ("Too Dangerous"), not pending.
 
 ## Git lifecycle (decided)
 

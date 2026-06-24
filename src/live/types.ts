@@ -20,6 +20,13 @@ export interface MostLikelyCard {
   text: string;
 }
 
+/** One frozen dilemma in a live Would You Rather deck (binary A/B, no score). */
+export interface WouldYouRatherCard {
+  promptId: string;
+  optionA: string;
+  optionB: string;
+}
+
 export interface SessionConfig {
   /** Seconds each question stays open before it can be revealed. */
   questionSeconds?: number;
