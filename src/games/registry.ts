@@ -67,6 +67,16 @@ export const GAMES: GameMeta[] = [
     logo: './games/would-you-rather.png',
     available: true,
   },
+  {
+    id: 'finish-the-lyric',
+    title: 'Finish the Lyric',
+    tagline: 'Live sing-along trivia — race to the next line.',
+    emoji: '🎤',
+    gradient: 'from-sky-500 via-indigo-500 to-purple-600',
+    route: '/live/finish-the-lyric',
+    logo: './games/finish-the-lyric.png',
+    available: true,
+  },
 ];
 
 export function getGame(id: string): GameMeta | undefined {

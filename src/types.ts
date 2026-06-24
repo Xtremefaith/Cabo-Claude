@@ -29,7 +29,12 @@ export interface Candidate {
   blurb: string;
 }
 
-export type GameId = 'hot-or-not' | 'most-likely-to' | 'guess-who-said-it' | 'would-you-rather';
+export type GameId =
+  | 'hot-or-not'
+  | 'most-likely-to'
+  | 'guess-who-said-it'
+  | 'would-you-rather'
+  | 'finish-the-lyric';
 
 /** A single player's completed run of a game. */
 export interface HotOrNotChoice {
@@ -112,6 +117,19 @@ export interface WouldYouRatherResultData {
   choices: WouldYouRatherChoice[];
 }
 
+/** One answer in a Finish the Lyric round. */
+export interface FinishLyricAnswer {
+  promptId: string;
+  /** The next-line the player picked. */
+  pick: string;
+  /** Whether `pick` matched the prompt's correct next line. */
+  correct: boolean;
+}
+
+export interface FinishLyricResultData {
+  answers: FinishLyricAnswer[];
+}
+
 interface BaseResult {
   id: string;
   /** The player who produced this result (the voter / swiper). */
@@ -139,9 +157,15 @@ export interface WouldYouRatherResult extends BaseResult {
   data: WouldYouRatherResultData;
 }
 
+export interface FinishLyricResult extends BaseResult {
+  gameId: 'finish-the-lyric';
+  data: FinishLyricResultData;
+}
+
 /** Discriminated union over `gameId` so each game's payload stays type-safe. */
 export type GameResult =
   | HotOrNotResult
   | MostLikelyResult
   | GuessWhoResult
-  | WouldYouRatherResult;
+  | WouldYouRatherResult
+  | FinishLyricResult;

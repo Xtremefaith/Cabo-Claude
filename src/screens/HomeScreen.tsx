@@ -17,6 +17,7 @@ export function HomeScreen() {
   const hasMltResults = results.some((r) => r.gameId === 'most-likely-to');
   const hasGuessResults = results.some((r) => r.gameId === 'guess-who-said-it');
   const hasWyrResults = results.some((r) => r.gameId === 'would-you-rather');
+  const hasLyricResults = results.some((r) => r.gameId === 'finish-the-lyric');
   const spice = group?.settings?.spice ?? DEFAULT_SPICE;
 
   return (
@@ -137,6 +138,14 @@ export function HomeScreen() {
                 className="font-display text-sm font-extrabold text-sun active:scale-95"
               >
                 📊 Splits
+              </button>
+            )}
+            {hasLyricResults && (
+              <button
+                onClick={() => navigate('/play/finish-the-lyric/results')}
+                className="font-display text-sm font-extrabold text-sun active:scale-95"
+              >
+                🎤 Lyrics
               </button>
             )}
             {hasHotResults && (

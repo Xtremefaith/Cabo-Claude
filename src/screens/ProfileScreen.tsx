@@ -118,7 +118,9 @@ export function ProfileScreen() {
                           ? r.data.mode === 'classic'
                             ? 'Famous Lines'
                             : 'Insiders'
-                          : 'Would You Rather'}
+                          : r.gameId === 'would-you-rather'
+                            ? 'Would You Rather'
+                            : 'Finish the Lyric'}
                   </span>
                   <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
                   <span className="font-display font-extrabold text-hot">
@@ -132,7 +134,9 @@ export function ProfileScreen() {
                             : r.data.mode === 'insiders-quote'
                               ? 'Added a quote 🤫'
                               : `${r.data.guesses.filter((g) => g.correct).length}/${r.data.guesses.length} 🕵️`
-                          : `${r.data.choices.length} picks 🤔`}
+                          : r.gameId === 'would-you-rather'
+                            ? `${r.data.choices.length} picks 🤔`
+                            : `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 🎤`}
                   </span>
                 </div>
               ))}

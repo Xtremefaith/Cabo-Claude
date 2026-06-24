@@ -22,6 +22,8 @@ import { LiveMostLikelyScreen } from './live/LiveMostLikelyScreen';
 import { LiveWouldYouRatherScreen } from './live/LiveWouldYouRatherScreen';
 import { WouldYouRatherScreen } from './games/wouldYouRather/WouldYouRatherScreen';
 import { WouldYouRatherResultsScreen } from './games/wouldYouRather/ResultsScreen';
+import { LiveFinishLyricScreen } from './live/LiveFinishLyricScreen';
+import { FinishLyricResultsScreen } from './games/finishTheLyric/ResultsScreen';
 import { Screen } from './components/ui';
 import { isCloud } from './store/storage';
 import { useGroup, useMyPlayerId, useReady } from './store/useStore';
@@ -69,6 +71,8 @@ export default function App() {
         <Route path="/live/would-you-rather" element={<LiveWouldYouRatherScreen />} />
         <Route path="/play/would-you-rather/run" element={<WouldYouRatherScreen />} />
         <Route path="/play/would-you-rather/results" element={<WouldYouRatherResultsScreen />} />
+        <Route path="/live/finish-the-lyric" element={<LiveFinishLyricScreen />} />
+        <Route path="/play/finish-the-lyric/results" element={<FinishLyricResultsScreen />} />
         <Route path="/manage" element={<ManageGroupScreen />} />
         <Route path="/players/:playerId" element={<ProfileScreen />} />
         <Route path="/reveal" element={<RevealScreen />} />
