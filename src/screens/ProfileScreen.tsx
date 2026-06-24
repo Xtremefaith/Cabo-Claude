@@ -120,7 +120,9 @@ export function ProfileScreen() {
                             : 'Insiders'
                           : r.gameId === 'would-you-rather'
                             ? 'Would You Rather'
-                            : 'Finish the Lyric'}
+                            : r.gameId === 'finish-the-lyric'
+                              ? 'Finish the Lyric'
+                              : 'Heaven or Hell'}
                   </span>
                   <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
                   <span className="font-display font-extrabold text-hot">
@@ -136,7 +138,9 @@ export function ProfileScreen() {
                               : `${r.data.guesses.filter((g) => g.correct).length}/${r.data.guesses.length} 🕵️`
                           : r.gameId === 'would-you-rather'
                             ? `${r.data.choices.length} picks 🤔`
-                            : `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 🎤`}
+                            : r.gameId === 'finish-the-lyric'
+                              ? `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 🎤`
+                              : `${r.data.verdicts.length} verdicts ⚖️`}
                   </span>
                 </div>
               ))}

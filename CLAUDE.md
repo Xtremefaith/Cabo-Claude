@@ -34,9 +34,10 @@ observe via Realtime while the host advances a phase machine:
   (header/fallback/timer), and one screen per live game.
 - **The engine is game-agnostic.** `session.deck` is `unknown[]` and each screen
   casts to its own card type (`LiveDeckCard` for trivia, `MostLikelyCard` for
-  Most Likely To). `submitAnswer(answer, scoring?)` takes caller-supplied
-  `{ correct, points }`; trivia omits it and falls back to the speed-scaled rule,
-  opinion games pass `{ correct: null, points: 0 }`.
+  Most Likely To, `HeavenOrHellCard` for the swipe game — all in `live/types.ts`).
+  `submitAnswer(answer, scoring?)` takes caller-supplied `{ correct, points }`;
+  trivia omits it and falls back to the speed-scaled rule, opinion games pass
+  `{ correct: null, points: 0 }`.
 - **Scoring is hybrid**: speed-based points + leaderboard only where there's a
   correct answer (trivia). Opinion games (Most Likely To) are a pure tally — no
   score, just the crowned reveal. At a room's end each device persists its own run
@@ -53,10 +54,43 @@ observe via Realtime while the host advances a phase machine:
   crew member, no score, crowned reveal + "most crowned" superlative.
 - **Would You Rather** — `/live/would-you-rather` (`LiveWouldYouRatherScreen.tsx`):
   binary A/B, no score, reveal is the group's split + "most divided" superlative.
+- **Heaven or Hell** — `/live/heaven-or-hell` (`LiveHeavenOrHellScreen.tsx`): swipe
+  a candidate to Heaven (right) or Hell (left), no score, reveal is the group's
+  split framed as the angel/demon on the candidate's shoulders + "most
+  heaven/hell-bound" superlatives. Candidates are sampled from `data/celebrities.ts`
+  (reused — guarantees working Wikipedia headshots) with a few crew members mixed
+  in (`promptId` `player:<id>` → their avatar). Swipe interaction is its own
+  `SwipeVerdictCard.tsx` (a generalized clone of Hot or Not's `SwipeCard`, since
+  that game is locked and its card is Candidate-typed).
 
 The Insiders mode is still async until ported. **Hot or Not is locked** — its home
 tile carries a "Too Dangerous" stamp (`available: false` + `lockNote` in the
 registry; rendered by `GameTile`) and isn't playable.
+
+### Adding a new live game (the fast path)
+
+Copy the closest existing screen and edit. Pick the closest model by mechanic:
+trivia → `LiveGuessWhoScreen`; vote-a-person → `LiveMostLikelyScreen`; binary
+opinion → `LiveWouldYouRatherScreen`; swipe → `LiveHeavenOrHellScreen`. All share
+the same `StartView → LobbyView → QuestionView → RevealView → FinalView` skeleton,
+`HostHandoff`, the auto-reveal `advancedRef` effect, and the persist-once-at-final
+`addResult` block. The touch points to change are always the same:
+
+1. `types.ts` — add the id to the `GameId` union + a `…Result`/`…ResultData` type,
+   and add it to the `GameResult` union. **`ProfileScreen.tsx`'s history ternary
+   is exhaustive over the union — add a branch there or the build breaks.**
+2. `live/types.ts` — add the per-game `…Card` deck-card type.
+3. `live/LiveXScreen.tsx` — the screen. Opinion games reuse `NO_SCORE`; reveal/
+   final compute a tally from `answers`. Deck builder uses `pickFreshFirst(...)`
+   over a `data/*.ts` prompt pool (or reuse `celebrities.ts`), filtered by group
+   `spice` where relevant.
+4. `games/registry.ts` — add the `GameMeta` entry (`available: true`,
+   `route: '/live/<id>'`, `logo: './games/<id>.png'`).
+5. `App.tsx` — add the `<Route path="/live/<id>" …>`.
+6. Logo art goes in `public/games/<id>.png` (square, lowercase-hyphen name; the
+   art carries its own title so the tile shows it instead of the gradient).
+7. No new migration needed — the generic `game_sessions` schema fits any deck/
+   answer shape (deck + answer are JSONB).
 
 ## Backlog (not yet built)
 
@@ -66,6 +100,21 @@ registry; rendered by `GameTile`) and isn't playable.
   distinguishes a non-playing host driver.
 - **Guess Who Said It → Insiders**: still async; port to live (or decide its fate)
   when ready. Hot or Not is intentionally locked ("Too Dangerous"), not pending.
+- **Heaven or Hell → public ("career") verdicts.** Show each candidate's tally
+  across ALL groups during the reveal — the angel/demon shoulders flip to *public*
+  Heaven/Hell %, with the crew's split moving below (the reveal layout in
+  `LiveHeavenOrHellScreen.tsx` is already built to receive this — see its file
+  header). Needs a cross-group aggregate that bypasses per-group RLS: a public,
+  PII-free `candidate_id → {heaven, hell}` tally table written via a
+  `SECURITY DEFINER` RPC at a room's end, and read via another RPC. **Only for
+  famous candidates — never crew members** (mixing a player's verdicts into a
+  global public tally would leak; see the User Anonymity doc). Famous candidates
+  already have stable ids (`celebrities.ts`); crew cards use `player:<id>` and must
+  be filtered out before any public write.
+- **`Finish the Lyric` logo is already uploaded** at
+  `public/games/AD33F533-4BD5-46D5-9D78-66A2D92F667F.png` ("CAN YOU FINISH THE
+  LYRIC?") for a future game — rename to `finish-the-lyric.png` when that game is
+  built. The game itself isn't started.
 
 ## Git lifecycle (decided)
 
@@ -110,6 +159,12 @@ ends, so anything worth keeping must already be committed and pushed.
 
 - `yarn install` then `yarn build` (runs `tsc -b && vite build`) — use this to
   typecheck and confirm a change compiles before merging.
+- **In the web/remote sandbox, `yarn install` often flakes** ("aborted" /
+  connection resets) because `registry.yarnpkg.com` routes through the egress
+  proxy. `npm install` uses a different HTTP stack and reliably succeeds; deps
+  resolve fine for a build check. If you do, delete the `package-lock.json` it
+  creates afterward — the repo stays yarn-based (don't commit it or a churned
+  `yarn.lock`).
 
 ## Supabase
 

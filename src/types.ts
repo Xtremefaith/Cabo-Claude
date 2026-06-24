@@ -34,7 +34,8 @@ export type GameId =
   | 'most-likely-to'
   | 'guess-who-said-it'
   | 'would-you-rather'
-  | 'finish-the-lyric';
+  | 'finish-the-lyric'
+  | 'heaven-or-hell';
 
 /** A single player's completed run of a game. */
 export interface HotOrNotChoice {
@@ -130,6 +131,22 @@ export interface FinishLyricResultData {
   answers: FinishLyricAnswer[];
 }
 
+/**
+ * One Heaven or Hell verdict: this player sent `candidateId` to 'heaven' or
+ * 'hell'. The display name is stored alongside (same approach as MostLikelyVote)
+ * so reveals/career stats stay stable even if the candidate pool changes. For a
+ * crew member mixed in as a candidate, `candidateId` is `player:<playerId>`.
+ */
+export interface HeavenOrHellVerdict {
+  candidateId: string;
+  candidateName: string;
+  verdict: 'heaven' | 'hell';
+}
+
+export interface HeavenOrHellResultData {
+  verdicts: HeavenOrHellVerdict[];
+}
+
 interface BaseResult {
   id: string;
   /** The player who produced this result (the voter / swiper). */
@@ -162,10 +179,16 @@ export interface FinishLyricResult extends BaseResult {
   data: FinishLyricResultData;
 }
 
+export interface HeavenOrHellResult extends BaseResult {
+  gameId: 'heaven-or-hell';
+  data: HeavenOrHellResultData;
+}
+
 /** Discriminated union over `gameId` so each game's payload stays type-safe. */
 export type GameResult =
   | HotOrNotResult
   | MostLikelyResult
   | GuessWhoResult
   | WouldYouRatherResult
-  | FinishLyricResult;
+  | FinishLyricResult
+  | HeavenOrHellResult;

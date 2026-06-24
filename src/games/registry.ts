@@ -77,6 +77,16 @@ export const GAMES: GameMeta[] = [
     logo: './games/finish-the-lyric.png',
     available: true,
   },
+  {
+    id: 'heaven-or-hell',
+    title: 'Heaven or Hell',
+    tagline: 'Live swipe-off — Heaven or Hell for each soul.',
+    emoji: '⚖️',
+    gradient: 'from-sky-400 via-purple-500 to-red-600',
+    route: '/live/heaven-or-hell',
+    logo: './games/heaven-or-hell.png',
+    available: true,
+  },
 ];
 
 export function getGame(id: string): GameMeta | undefined {

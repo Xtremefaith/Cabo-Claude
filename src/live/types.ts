@@ -27,6 +27,21 @@ export interface WouldYouRatherCard {
   optionB: string;
 }
 
+/**
+ * One frozen candidate in a live Heaven or Hell deck. Players swipe each one to
+ * 'heaven' or 'hell' (binary, no score — like Would You Rather). A candidate is
+ * either a famous face (resolve a headshot from `wikiTitle`) or a crew member
+ * mixed in for fun (`playerId` → render their avatar). `promptId` is the celeb
+ * id, or `player:<playerId>` for a crew member.
+ */
+export interface HeavenOrHellCard {
+  promptId: string;
+  name: string;
+  blurb: string;
+  wikiTitle?: string;
+  playerId?: string;
+}
+
 export interface SessionConfig {
   /** Seconds each question stays open before it can be revealed. */
   questionSeconds?: number;
