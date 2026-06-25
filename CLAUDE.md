@@ -54,6 +54,17 @@ observe via Realtime while the host advances a phase machine:
   crew member, no score, crowned reveal + "most crowned" superlative.
 - **Would You Rather** — `/live/would-you-rather` (`LiveWouldYouRatherScreen.tsx`):
   binary A/B, no score, reveal is the group's split + "most divided" superlative.
+- **Mind Meld** — `/live/mind-meld` (`LiveMindMeldScreen.tsx`): the first
+  **collaborative** live game and the first with **free-text answers** (every game
+  before it was tap/swipe). Each round the crew types a short answer to a prompt
+  (`data/mindMeldPrompts.ts`, spice-filtered); the reveal clusters identical
+  (normalized — lowercase/trim/strip-punct) answers and the group banks a **single
+  shared score** for how synced they are. Scoring (`meldOf`) is collaborative — no
+  per-player score, no leaderboard: round points = matched players / total ×100,
+  with a 150-pt jackpot for a unanimous "TOTAL MELD". The final screen rates the
+  crew's telepathy (One Mind → Total Strangers) from the average meld fraction.
+  Submitted answers lock (first answer wins, like every other game). No logo art
+  yet — uses the gradient tile (drop `public/games/mind-meld.png` to upgrade it).
 - **Heaven or Hell** — `/live/heaven-or-hell` (`LiveHeavenOrHellScreen.tsx`): swipe
   a candidate to Heaven (right) or Hell (left), no score, reveal is the group's
   split framed as the angel/demon on the candidate's shoulders + "most
