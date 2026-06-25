@@ -36,7 +36,8 @@ export type GameId =
   | 'would-you-rather'
   | 'finish-the-lyric'
   | 'heaven-or-hell'
-  | 'mind-meld';
+  | 'mind-meld'
+  | 'trivia';
 
 /** A single player's completed run of a game. */
 export interface HotOrNotChoice {
@@ -164,6 +165,17 @@ export interface MindMeldResultData {
   answers: MindMeldAnswer[];
 }
 
+/** One Trivia answer: this player picked `pick`, which was right or wrong. */
+export interface TriviaAnswer {
+  promptId: string;
+  pick: string;
+  correct: boolean;
+}
+
+export interface TriviaResultData {
+  answers: TriviaAnswer[];
+}
+
 interface BaseResult {
   id: string;
   /** The player who produced this result (the voter / swiper). */
@@ -206,6 +218,11 @@ export interface MindMeldResult extends BaseResult {
   data: MindMeldResultData;
 }
 
+export interface TriviaResult extends BaseResult {
+  gameId: 'trivia';
+  data: TriviaResultData;
+}
+
 /** Discriminated union over `gameId` so each game's payload stays type-safe. */
 export type GameResult =
   | HotOrNotResult
@@ -214,4 +231,5 @@ export type GameResult =
   | WouldYouRatherResult
   | FinishLyricResult
   | HeavenOrHellResult
-  | MindMeldResult;
+  | MindMeldResult
+  | TriviaResult;

@@ -70,6 +70,7 @@ export function ProfileScreen() {
       r.gameId === 'finish-the-lyric' ||
       r.gameId === 'heaven-or-hell' ||
       r.gameId === 'mind-meld' ||
+      r.gameId === 'trivia' ||
       (r.gameId === 'guess-who-said-it' && r.data.mode === 'classic'),
   ).length;
 
@@ -207,7 +208,9 @@ export function ProfileScreen() {
                               ? 'Finish the Lyric'
                               : r.gameId === 'heaven-or-hell'
                                 ? 'Heaven or Hell'
-                                : 'Mind Meld'}
+                                : r.gameId === 'mind-meld'
+                                  ? 'Mind Meld'
+                                  : 'Trivia'}
                   </span>
                   <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
                   <span className="font-display font-extrabold text-hot">
@@ -227,7 +230,9 @@ export function ProfileScreen() {
                               ? `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 🎤`
                               : r.gameId === 'heaven-or-hell'
                                 ? `${r.data.verdicts.length} verdicts ⚖️`
-                                : `${r.data.answers.length} answers 🧠`}
+                                : r.gameId === 'mind-meld'
+                                  ? `${r.data.answers.length} answers 🧠`
+                                  : `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} ❓`}
                   </span>
                 </div>
               ))}

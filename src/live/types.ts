@@ -53,6 +53,19 @@ export interface MindMeldCard {
   text: string;
 }
 
+/**
+ * One frozen question in a live Trivia deck. Players tap an option; scoring is
+ * the default speed-scaled rule (correct if `answer` matches), same as Famous
+ * Lines. `options` is answer + decoys, pre-shuffled once at room creation.
+ */
+export interface TriviaCard {
+  promptId: string;
+  category: string;
+  question: string;
+  answer: string;
+  options: string[];
+}
+
 export interface SessionConfig {
   /** Seconds each question stays open before it can be revealed. */
   questionSeconds?: number;

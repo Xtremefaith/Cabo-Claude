@@ -97,6 +97,15 @@ export const GAMES: GameMeta[] = [
     logo: './games/mind-meld.png',
     available: true,
   },
+  {
+    id: 'trivia',
+    title: 'Trivia',
+    tagline: 'Live general-knowledge quiz — fastest answer wins.',
+    emoji: '❓',
+    gradient: 'from-amber-400 via-orange-500 to-hot',
+    route: '/live/trivia',
+    available: true,
+  },
 ];
 
 export function getGame(id: string): GameMeta | undefined {

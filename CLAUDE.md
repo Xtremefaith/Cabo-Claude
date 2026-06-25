@@ -50,6 +50,13 @@ observe via Realtime while the host advances a phase machine:
 **Live so far (sync-only):**
 - **Guess Who Said It → Famous Lines** — `/live/guess-who-said-it`
   (`LiveGuessWhoScreen.tsx`): trivia, speed points + leaderboard.
+- **Trivia** — `/live/trivia` (`LiveTriviaScreen.tsx`): general-knowledge MCQ
+  quiz, the second game on the speed-scored leaderboard engine (a near-copy of
+  Famous Lines). Mixed-category pool in `data/triviaQuestions.ts` (each card shows
+  its `category` as the round topic; `difficulty` stored but not yet used to build
+  decks — no spice filter, trivia isn't spicy). Uses the default speed-scaled
+  scoring (`submitAnswer(opt)` with no override → correct if `opt === card.answer`).
+  No logo art yet — uses the gradient tile.
 - **Most Likely To** — `/live/most-likely-to` (`LiveMostLikelyScreen.tsx`): vote a
   crew member, no score, crowned reveal + "most crowned" superlative.
 - **Would You Rather** — `/live/would-you-rather` (`LiveWouldYouRatherScreen.tsx`):
