@@ -56,7 +56,7 @@ observe via Realtime while the host advances a phase machine:
   its `category` as the round topic; `difficulty` stored but not yet used to build
   decks — no spice filter, trivia isn't spicy). Uses the default speed-scaled
   scoring (`submitAnswer(opt)` with no override → correct if `opt === card.answer`).
-  No logo art yet — uses the gradient tile.
+  Logo wired at `./games/trivia.png`.
 - **Most Likely To** — `/live/most-likely-to` (`LiveMostLikelyScreen.tsx`): vote a
   crew member, no score, crowned reveal + "most crowned" superlative.
 - **Would You Rather** — `/live/would-you-rather` (`LiveWouldYouRatherScreen.tsx`):

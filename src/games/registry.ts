@@ -104,6 +104,7 @@ export const GAMES: GameMeta[] = [
     emoji: '❓',
     gradient: 'from-amber-400 via-orange-500 to-hot',
     route: '/live/trivia',
+    logo: './games/trivia.png',
     available: true,
   },
 ];
