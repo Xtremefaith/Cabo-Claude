@@ -19,7 +19,8 @@ import { Headshot } from '../components/Headshot';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 import { useGroup, useMyPlayerId } from '../store/useStore';
 import { addResult, getPlayer, getPlayers, getResults, isCloud } from '../store/storage';
-import { CELEBRITIES } from '../data/celebrities';
+import { HEAVEN_OR_HELL_CANDIDATES } from '../data/heavenOrHellCandidates';
+import { DEFAULT_SPICE } from '../data/spice';
 import { resolveHeadshots } from '../lib/wikiImages';
 import { pickFreshFirst, shuffle, uid } from '../lib/util';
 import type { HeavenOrHellVerdict } from '../types';
@@ -59,11 +60,12 @@ function seenCandidateIds(): Set<string> {
 }
 
 /**
- * Build a fresh deck: mostly famous faces (preferring ones the group hasn't
- * judged), with a few crew members shuffled in for fun. Order is frozen here so
- * every device sees the same candidates in the same order.
+ * Build a fresh deck: famous faces at/under the group's spice (preferring ones
+ * the group hasn't judged), with a few crew members shuffled in for fun. Higher
+ * spice unlocks more controversial candidates. Order is frozen here so every
+ * device sees the same candidates in the same order.
  */
-function buildDeck(): HeavenOrHellCard[] {
+function buildDeck(maxSpice: number): HeavenOrHellCard[] {
   const seen = seenCandidateIds();
   const players = getPlayers();
   // 0..MAX crew candidates, never more than half the deck.
@@ -77,7 +79,8 @@ function buildDeck(): HeavenOrHellCard[] {
     playerId: p.id,
   }));
 
-  const famous: HeavenOrHellCard[] = pickFreshFirst(CELEBRITIES, DECK_SIZE - crew.length, (c) =>
+  const pool = HEAVEN_OR_HELL_CANDIDATES.filter((c) => c.spice <= maxSpice);
+  const famous: HeavenOrHellCard[] = pickFreshFirst(pool, DECK_SIZE - crew.length, (c) =>
     seen.has(c.id),
   ).map((c) => ({ promptId: c.id, name: c.name, blurb: c.blurb, wikiTitle: c.wikiTitle }));
 
@@ -185,10 +188,11 @@ export function LiveHeavenOrHellScreen() {
 
 // ----------------------------------------------------------------- start ---
 function StartView({ onStart }: { onStart: () => void }) {
+  const group = useGroup();
   const [hostPlays, setHostPlays] = useState(true);
 
   const start = async () => {
-    const deck = buildDeck();
+    const deck = buildDeck(group?.settings?.spice ?? DEFAULT_SPICE);
     await hostCreateSession(deck, { questionSeconds: QUESTION_SECONDS, deckSize: deck.length }, hostPlays);
   };
 
@@ -589,6 +593,7 @@ function FinalView({
   onQuit: () => void;
 }) {
   const deck = session.deck as HeavenOrHellCard[];
+  const group = useGroup();
 
   const rows = useMemo(
     () =>
@@ -637,7 +642,7 @@ function FinalView({
   }, [session.id, answers, myId, deck]);
 
   const startNew = async () => {
-    const fresh = buildDeck();
+    const fresh = buildDeck(group?.settings?.spice ?? DEFAULT_SPICE);
     await hostCreateSession(fresh, session.config, session.hostPlays);
   };
 

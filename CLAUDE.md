@@ -57,9 +57,15 @@ observe via Realtime while the host advances a phase machine:
 - **Heaven or Hell** — `/live/heaven-or-hell` (`LiveHeavenOrHellScreen.tsx`): swipe
   a candidate to Heaven (right) or Hell (left), no score, reveal is the group's
   split framed as the angel/demon on the candidate's shoulders + "most
-  heaven/hell-bound" superlatives. Candidates are sampled from `data/celebrities.ts`
-  (reused — guarantees working Wikipedia headshots) with a few crew members mixed
-  in (`promptId` `player:<id>` → their avatar). Swipe interaction is its own
+  heaven/hell-bound" superlatives. Candidates come from `data/heavenOrHellCandidates.ts`
+  — a **spice-rated** pool: the mainstream `celebrities.ts` roster seeds spice 1,
+  and a curated `CONTROVERSIAL` list adds spice 3–5 (provocative celebs → divisive
+  moguls/media → polarizing politicians, televangelists, internet provocateurs).
+  The deck builder filters `spice <= group spice`, so higher spice surfaces edgier
+  faces. Editorial line: public figures only, excluding people defined by violent/
+  sexual crimes with real victims or mass-atrocity heads of state (not a debatable
+  party question; trivializes victims). A few crew members are mixed in
+  (`promptId` `player:<id>` → their avatar). Swipe interaction is its own
   `SwipeVerdictCard.tsx` (a generalized clone of Hot or Not's `SwipeCard`, since
   that game is locked and its card is Candidate-typed).
 
@@ -109,8 +115,15 @@ the same `StartView → LobbyView → QuestionView → RevealView → FinalView`
   `SECURITY DEFINER` RPC at a room's end, and read via another RPC. **Only for
   famous candidates — never crew members** (mixing a player's verdicts into a
   global public tally would leak; see the User Anonymity doc). Famous candidates
-  already have stable ids (`celebrities.ts`); crew cards use `player:<id>` and must
-  be filtered out before any public write.
+  already have stable ids (`heavenOrHellCandidates.ts`); crew cards use
+  `player:<id>` and must be filtered out before any public write.
+  **Decision (per product):** all famous candidates feed the public tally
+  regardless of spice — including the controversial spice 5 set (politicians,
+  televangelists, provocateurs). ⚠️ This makes the public tally an *outward-facing,
+  persistent, cross-group "is this named real person damned" scoreboard*. That's a
+  real defamation/targeting surface that the private game is not — **re-confirm
+  this scope when the public feature is actually built**, not just inherited from
+  the private candidate list.
 - **`Finish the Lyric` logo is already uploaded** at
   `public/games/AD33F533-4BD5-46D5-9D78-66A2D92F667F.png` ("CAN YOU FINISH THE
   LYRIC?") for a future game — rename to `finish-the-lyric.png` when that game is
