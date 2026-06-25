@@ -58,13 +58,18 @@ observe via Realtime while the host advances a phase machine:
   **collaborative** live game and the first with **free-text answers** (every game
   before it was tap/swipe). Each round the crew types a short answer to a prompt
   (`data/mindMeldPrompts.ts`, spice-filtered); the reveal clusters identical
-  (normalized — lowercase/trim/strip-punct) answers and the group banks a **single
-  shared score** for how synced they are. Scoring (`meldOf`) is collaborative — no
-  per-player score, no leaderboard: round points = matched players / total ×100,
-  with a 150-pt jackpot for a unanimous "TOTAL MELD". The final screen rates the
-  crew's telepathy (One Mind → Total Strangers) from the average meld fraction.
-  Submitted answers lock (first answer wins, like every other game). No logo art
-  yet — uses the gradient tile (drop `public/games/mind-meld.png` to upgrade it).
+  answers and the group banks a **single shared score** for how synced they are.
+  Matching (`normalize`) folds case/punctuation/whitespace **and** formatting-only
+  differences — spacing (`ice cream`=`icecream`) and regular plurals (`dog`=`dogs`)
+  — but deliberately stops short of typo/fuzzy matching (over short answers it
+  merges real distinct words; saying-it-the-same is the skill). A human host-merge
+  at reveal was offered but not yet built (see thread). Scoring (`meldOf`) is
+  collaborative — no per-player score, no leaderboard: round points = matched
+  players / total ×100, with a 150-pt jackpot for a unanimous "TOTAL MELD". The
+  final screen rates the crew's telepathy (One Mind → Total Strangers) from the
+  average meld fraction. Submitted answers lock (first answer wins, like every
+  other game). Logo path is wired (`./games/mind-meld.png`); the tile falls back
+  to the gradient until that file is dropped in `public/games/`.
 - **Heaven or Hell** — `/live/heaven-or-hell` (`LiveHeavenOrHellScreen.tsx`): swipe
   a candidate to Heaven (right) or Hell (left), no score, reveal is the group's
   split framed as the angel/demon on the candidate's shoulders + "most

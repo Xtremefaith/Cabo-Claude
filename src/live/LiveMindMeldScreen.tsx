@@ -62,13 +62,23 @@ function buildMindMeldDeck(maxSpice: number): MindMeldCard[] {
 }
 
 // --------------------------------------------------------------- scoring ---
-/** Normalize an answer for matching: lowercase, trimmed, punctuation stripped. */
+/**
+ * Normalize an answer into a match key. Beyond case/punctuation/whitespace we
+ * also fold *formatting* differences that aren't really different answers:
+ * spacing (`ice cream` = `icecream`) and regular plurals (`dog` = `dogs`). We
+ * deliberately stop there — no typo/edit-distance or fuzzy matching, because over
+ * short answers that merges genuinely different words (`cat`/`car`). Saying the
+ * same thing, spelled the same way, is the actual skill of the game.
+ */
 function normalize(s: string): string {
-  return s
+  let key = s
     .toLowerCase()
     .replace(/[^\p{L}\p{N} ]/gu, '') // drop punctuation/emoji
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/\s+/g, ''); // fold spacing: "ice cream" → "icecream"
+  // Regular-plural fold: trailing single "s" on a long-enough word ("dogs" →
+  // "dog"), but not "ss" words ("boss") or short ones ("bus").
+  if (key.length > 3 && key.endsWith('s') && !key.endsWith('ss')) key = key.slice(0, -1);
+  return key;
 }
 
 interface Cluster {

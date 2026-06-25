@@ -94,6 +94,7 @@ export const GAMES: GameMeta[] = [
     emoji: '🧠',
     gradient: 'from-sky-400 via-indigo-500 to-emerald-400',
     route: '/live/mind-meld',
+    logo: './games/mind-meld.png',
     available: true,
   },
 ];
