@@ -35,7 +35,8 @@ export type GameId =
   | 'guess-who-said-it'
   | 'would-you-rather'
   | 'finish-the-lyric'
-  | 'heaven-or-hell';
+  | 'heaven-or-hell'
+  | 'mind-meld';
 
 /** A single player's completed run of a game. */
 export interface HotOrNotChoice {
@@ -147,6 +148,22 @@ export interface HeavenOrHellResultData {
   verdicts: HeavenOrHellVerdict[];
 }
 
+/**
+ * One Mind Meld answer: this player blurted `text` for a prompt. The prompt text
+ * is stored alongside (same approach as MostLikelyVote) so history stays stable
+ * even if the prompt pool changes. Mind Meld is a collaborative game with a
+ * single banked group score — there is no per-player score to persist.
+ */
+export interface MindMeldAnswer {
+  promptId: string;
+  promptText: string;
+  text: string;
+}
+
+export interface MindMeldResultData {
+  answers: MindMeldAnswer[];
+}
+
 interface BaseResult {
   id: string;
   /** The player who produced this result (the voter / swiper). */
@@ -184,6 +201,11 @@ export interface HeavenOrHellResult extends BaseResult {
   data: HeavenOrHellResultData;
 }
 
+export interface MindMeldResult extends BaseResult {
+  gameId: 'mind-meld';
+  data: MindMeldResultData;
+}
+
 /** Discriminated union over `gameId` so each game's payload stays type-safe. */
 export type GameResult =
   | HotOrNotResult
@@ -191,4 +213,5 @@ export type GameResult =
   | GuessWhoResult
   | WouldYouRatherResult
   | FinishLyricResult
-  | HeavenOrHellResult;
+  | HeavenOrHellResult
+  | MindMeldResult;

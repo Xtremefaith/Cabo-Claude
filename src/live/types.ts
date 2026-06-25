@@ -42,6 +42,17 @@ export interface HeavenOrHellCard {
   playerId?: string;
 }
 
+/**
+ * One frozen prompt in a live Mind Meld deck. Players type a short free-text
+ * answer; the reveal clusters identical (normalized) answers and the crew banks
+ * a single shared score for how much they melded (collaborative — no per-player
+ * score). `promptId` is the prompt's id from data/mindMeldPrompts.ts.
+ */
+export interface MindMeldCard {
+  promptId: string;
+  text: string;
+}
+
 export interface SessionConfig {
   /** Seconds each question stays open before it can be revealed. */
   questionSeconds?: number;

@@ -87,6 +87,16 @@ export const GAMES: GameMeta[] = [
     logo: './games/heaven-or-hell.png',
     available: true,
   },
+  {
+    id: 'mind-meld',
+    title: 'Mind Meld',
+    tagline: 'Say the same thing — bank points together.',
+    emoji: '🧠',
+    gradient: 'from-sky-400 via-indigo-500 to-emerald-400',
+    route: '/live/mind-meld',
+    logo: './games/mind-meld.png',
+    available: true,
+  },
 ];
 
 export function getGame(id: string): GameMeta | undefined {

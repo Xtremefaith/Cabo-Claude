@@ -69,6 +69,7 @@ export function ProfileScreen() {
       r.gameId === 'would-you-rather' ||
       r.gameId === 'finish-the-lyric' ||
       r.gameId === 'heaven-or-hell' ||
+      r.gameId === 'mind-meld' ||
       (r.gameId === 'guess-who-said-it' && r.data.mode === 'classic'),
   ).length;
 
@@ -204,7 +205,9 @@ export function ProfileScreen() {
                             ? 'Would You Rather'
                             : r.gameId === 'finish-the-lyric'
                               ? 'Finish the Lyric'
-                              : 'Heaven or Hell'}
+                              : r.gameId === 'heaven-or-hell'
+                                ? 'Heaven or Hell'
+                                : 'Mind Meld'}
                   </span>
                   <span className="font-body text-sm text-white/50">{formatDate(r.playedAt)}</span>
                   <span className="font-display font-extrabold text-hot">
@@ -222,7 +225,9 @@ export function ProfileScreen() {
                             ? `${r.data.choices.length} picks 🤔`
                             : r.gameId === 'finish-the-lyric'
                               ? `${r.data.answers.filter((a) => a.correct).length}/${r.data.answers.length} 🎤`
-                              : `${r.data.verdicts.length} verdicts ⚖️`}
+                              : r.gameId === 'heaven-or-hell'
+                                ? `${r.data.verdicts.length} verdicts ⚖️`
+                                : `${r.data.answers.length} answers 🧠`}
                   </span>
                 </div>
               ))}
