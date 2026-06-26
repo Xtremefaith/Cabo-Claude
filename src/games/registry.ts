@@ -107,6 +107,15 @@ export const GAMES: GameMeta[] = [
     logo: './games/trivia.png',
     available: true,
   },
+  {
+    id: 'cancun-vs-cabo',
+    title: 'Cancún vs Cabo',
+    tagline: 'Vote-together survey — crown next year’s trip.',
+    emoji: '🏝️',
+    gradient: 'from-hot via-amber-400 to-sky-400',
+    route: '/live/cancun-vs-cabo',
+    available: true,
+  },
 ];
 
 export function getGame(id: string): GameMeta | undefined {

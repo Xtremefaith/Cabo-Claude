@@ -37,7 +37,8 @@ export type GameId =
   | 'finish-the-lyric'
   | 'heaven-or-hell'
   | 'mind-meld'
-  | 'trivia';
+  | 'trivia'
+  | 'cancun-vs-cabo';
 
 /** A single player's completed run of a game. */
 export interface HotOrNotChoice {
@@ -176,6 +177,25 @@ export interface TriviaResultData {
   answers: TriviaAnswer[];
 }
 
+/**
+ * One Cancún vs Cabo vote: this player picked side 'a' or 'b' for a topic. The
+ * topic label and both side names are stored alongside (same approach as
+ * MostLikelyVote) so the survey recap stays stable even if the topic list or
+ * contestants change later.
+ */
+export interface CancunVsCaboPick {
+  topicId: string;
+  topicLabel: string;
+  side: 'a' | 'b';
+}
+
+export interface CancunVsCaboResultData {
+  /** The two contestants this room compared, in 'a'/'b' order. */
+  sideA: string;
+  sideB: string;
+  picks: CancunVsCaboPick[];
+}
+
 interface BaseResult {
   id: string;
   /** The player who produced this result (the voter / swiper). */
@@ -223,6 +243,11 @@ export interface TriviaResult extends BaseResult {
   data: TriviaResultData;
 }
 
+export interface CancunVsCaboResult extends BaseResult {
+  gameId: 'cancun-vs-cabo';
+  data: CancunVsCaboResultData;
+}
+
 /** Discriminated union over `gameId` so each game's payload stays type-safe. */
 export type GameResult =
   | HotOrNotResult
@@ -232,4 +257,5 @@ export type GameResult =
   | FinishLyricResult
   | HeavenOrHellResult
   | MindMeldResult
-  | TriviaResult;
+  | TriviaResult
+  | CancunVsCaboResult;

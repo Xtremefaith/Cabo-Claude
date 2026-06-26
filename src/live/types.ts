@@ -66,10 +66,23 @@ export interface TriviaCard {
   options: string[];
 }
 
+/**
+ * One frozen topic in a live Cancún vs Cabo deck. The two contestants are
+ * room-level (SessionConfig.sideA / sideB), so a card only carries its category.
+ */
+export interface CancunVsCaboCard {
+  topicId: string;
+  label: string;
+  emoji: string;
+}
+
 export interface SessionConfig {
   /** Seconds each question stays open before it can be revealed. */
   questionSeconds?: number;
   deckSize?: number;
+  /** Cancún vs Cabo: the two contestants being compared (option 'a' / 'b'). */
+  sideA?: string;
+  sideB?: string;
 }
 
 export interface LiveSession {

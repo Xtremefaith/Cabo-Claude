@@ -24,6 +24,7 @@ import { LiveWouldYouRatherScreen } from './live/LiveWouldYouRatherScreen';
 import { LiveHeavenOrHellScreen } from './live/LiveHeavenOrHellScreen';
 import { LiveMindMeldScreen } from './live/LiveMindMeldScreen';
 import { LiveTriviaScreen } from './live/LiveTriviaScreen';
+import { LiveCancunVsCaboScreen } from './live/LiveCancunVsCaboScreen';
 import { WouldYouRatherScreen } from './games/wouldYouRather/WouldYouRatherScreen';
 import { WouldYouRatherResultsScreen } from './games/wouldYouRather/ResultsScreen';
 import { LiveFinishLyricScreen } from './live/LiveFinishLyricScreen';
@@ -76,6 +77,7 @@ export default function App() {
         <Route path="/live/heaven-or-hell" element={<LiveHeavenOrHellScreen />} />
         <Route path="/live/mind-meld" element={<LiveMindMeldScreen />} />
         <Route path="/live/trivia" element={<LiveTriviaScreen />} />
+        <Route path="/live/cancun-vs-cabo" element={<LiveCancunVsCaboScreen />} />
         <Route path="/play/would-you-rather/run" element={<WouldYouRatherScreen />} />
         <Route path="/play/would-you-rather/results" element={<WouldYouRatherResultsScreen />} />
         <Route path="/live/finish-the-lyric" element={<LiveFinishLyricScreen />} />

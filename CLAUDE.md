@@ -61,6 +61,19 @@ observe via Realtime while the host advances a phase machine:
   crew member, no score, crowned reveal + "most crowned" superlative.
 - **Would You Rather** — `/live/would-you-rather` (`LiveWouldYouRatherScreen.tsx`):
   binary A/B, no score, reveal is the group's split + "most divided" superlative.
+- **Cancún vs Cabo** — `/live/cancun-vs-cabo` (`LiveCancunVsCaboScreen.tsx`): a
+  **vote-together survey**, not a quiz — no score, **no timer**, nothing
+  auto-advances on a clock. Every topic (`data/cancunVsCaboTopics.ts`) pits the
+  same two contestants head-to-head; the two contestants are **room-level and
+  editable at start** (default "Cancún" vs "Cabo", stored in
+  `SessionConfig.sideA/sideB`), so it's reusable for future trips. A session plays
+  every topic in order (a survey measures everything — no fresh-first/spice).
+  Pacing: vote → auto-reveal once everyone's in (or host reveals) → **deliberate**
+  → host taps Next. Reveal shows the topic split + a running "topics won"
+  scoreboard; the final screen tallies topic wins and **crowns the overall
+  winner** (even per-topic split = a draw, counts for neither; overall tie = "dead
+  heat, sudden-death tiebreaker needed"). Binary A/B like Would You Rather (reuses
+  `NO_SCORE`); no logo art yet — uses the gradient tile.
 - **Mind Meld** — `/live/mind-meld` (`LiveMindMeldScreen.tsx`): the first
   **collaborative** live game and the first with **free-text answers** (every game
   before it was tap/swipe). Each round the crew types a short answer to a prompt
