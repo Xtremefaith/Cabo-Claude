@@ -73,7 +73,7 @@ observe via Realtime while the host advances a phase machine:
   scoreboard; the final screen tallies topic wins and **crowns the overall
   winner** (even per-topic split = a draw, counts for neither; overall tie = "dead
   heat, sudden-death tiebreaker needed"). Binary A/B like Would You Rather (reuses
-  `NO_SCORE`); no logo art yet — uses the gradient tile.
+  `NO_SCORE`); logo wired at `./games/cancun-vs-cabo.png`.
 - **Mind Meld** — `/live/mind-meld` (`LiveMindMeldScreen.tsx`): the first
   **collaborative** live game and the first with **free-text answers** (every game
   before it was tap/swipe). Each round the crew types a short answer to a prompt

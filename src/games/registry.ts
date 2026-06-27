@@ -114,6 +114,7 @@ export const GAMES: GameMeta[] = [
     emoji: '🏝️',
     gradient: 'from-hot via-amber-400 to-sky-400',
     route: '/live/cancun-vs-cabo',
+    logo: './games/cancun-vs-cabo.png',
     available: true,
   },
 ];
